@@ -5,7 +5,7 @@ import builtins
 
 class Deck:
     def __init__(self, values: List[str], nominal: Optional[List[str]] = None):
-        self.nominal = nominal or ['∆', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'σ', 'λ', '♛']
+        self.nominal = nominal or ['∆', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'ß', 'λ', '♛']
         self.values = values or ['☐', '○', '▲', 'Ω', '⌗']
         self.deck = None
         self.target_chain = None
@@ -48,7 +48,7 @@ class Deck:
                     break
         return len(chain) == 2
 
-    def collect_target_chain(self, target: List[Union[List[str], int]]) -> List[str]:
+    def collect_target_chain(self, target: list[int | list[str]]) -> List[str]:
         self.target_chain = []
         for item in target:
             match type(item):
@@ -59,13 +59,14 @@ class Deck:
         return self.target_chain
 
     def psv(self, target: List[str]):
-        for _ in range(10000):
+        for iteration in range(10000):
             self.new_deck()
             self.shuffle_deck()
             self.target_chain = self.collect_target_chain(target)
             self.line = "  ".join(self.target_chain)
             assert len(self.target_chain) > 2, "Длинна целевой цепочки должна быть больше 2"
             if self.chain_check(self.target_chain):
+                print(f"{iteration=}")
                 self.target_chain = self.line.split("  ")
                 self.chain_check(self.target_chain, show=True)
                 self.line = None
@@ -74,9 +75,20 @@ class Deck:
 
 if __name__ == '__main__':
     deck = Deck(
-        values=['△', '○', '☐', 'Ω'],
-        nominal=['∆', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'σ', 'λ', '♛']
+        values=[
+            # '△',
+            '▲',
+            '○',
+            '☐',
+            'Ω',
+            # '♦',
+            # '☆',
+            # '✄',
+            # '♠',
+            # '⌗',
+        ],
+        nominal=['∆', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'ß', 'λ', '♛']
     )
 
-    target = [3, ['4△'], 2, ['♛Ω', 'λ○'], 3]
+    target = [30]
     print(deck.psv(target=target))
