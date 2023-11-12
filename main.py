@@ -50,6 +50,24 @@ class Deck:
         self.deck = self.deck[n:]  # Убирает взятые карты из колоды
         return taken_cards
 
+    def replace_numbers(self, target: List):
+        """
+        Заменяет числа в списке на соответствующее количество карт.
+
+        Parameters:
+        - target: список, включающий числа и/или строки номиналов карт.
+
+        Returns:
+        - replaced: список, где числа заменены на соответствующее количество карт.
+        """
+        replaced = []
+        for item in target:
+            if isinstance(item, int):
+                replaced += self.take_cards(item)
+            else:
+                replaced.append(item)
+        return replaced
+
     def print_deck(self):
         """Выводит текущую колоду карт."""
         line = " ".join(self.deck)
@@ -62,7 +80,7 @@ if __name__ == '__main__':
     deck.shuffle_deck()
     deck.print_deck()
 
-    # Пример взятия 5 карт из колоды
-    taken_cards = deck.take_cards(5)
-    print(f"\nTaken cards: {taken_cards}")
+    target_list = [3, '10◊', 2]
+    replaced_list = deck.replace_numbers(target_list)
+    print(f"\nReplaced list: {replaced_list}")
     deck.print_deck()
