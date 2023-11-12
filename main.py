@@ -3,7 +3,7 @@ from typing import List, Optional
 
 
 class Deck:
-    def __init__(self, values: List[str] = None, nominal: List[str] = None):
+    def __init__(self, suits: List[str] = None, nominal: List[str] = None):
         """
         Конструктор класса Deck.
 
@@ -17,7 +17,7 @@ class Deck:
         - deck: список карт в колоде.
         """
         self.nominal = nominal or ['∆', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'ß', 'λ', '♛']
-        self.values = values or ['☐', '○', '▲', 'Ω', '⌗']
+        self.suits = suits or ['☐', '○', '▲', 'Ω', '⌗']
         self.deck = None
 
     def new_deck(self):
@@ -27,7 +27,7 @@ class Deck:
         Returns:
         - deck: список карт в колоде.
         """
-        self.deck = [f"{nominal}{value}" for nominal in self.nominal for value in self.values]
+        self.deck = [f"{nominal}{suit}" for nominal in self.nominal for suit in self.suits]
         return self.deck
 
     def print_deck(self):
@@ -37,6 +37,6 @@ class Deck:
 
 
 if __name__ == '__main__':
-    deck = Deck()
+    deck = Deck(suits=['♠', '♡', '◊', '♣'])
     deck.new_deck()
     deck.print_deck()
