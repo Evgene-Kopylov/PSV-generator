@@ -19,6 +19,7 @@ class Deck:
         self.nominal = nominal or ['T', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'ß', 'λ', '♛']
         self.suits = suits or ['♠', '♡', '◊', '♣']
         self.deck = None
+        self.target = None
         self.target_chain = None
         self.line = None
 
@@ -127,6 +128,7 @@ class Deck:
         - iteration: номер попытки.
         - sequence: последовательность сложения.
         """
+        self.target = target
         for iteration in range(1, 10001):
             self.new_deck()
             self.shuffle_deck()
@@ -135,9 +137,17 @@ class Deck:
             assert len(self.target_chain) > 2, "Длина целевой цепочки должна быть больше 2"
             folded, ending = self.chain_check(self.target_chain)
             if folded:
-                print(f"Попытка: {iteration}")
-                print(f"Комбинация: {self.line}")
-                print(f'Остаток от сложения: {ending}')
+                line = f"""
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+Целевая: {self.target}
+Попытка: {iteration}
+Комбинация: {self.line}
+Остаток от сложения: {ending}
+"""
+                print(line)
+                filename = "history.txt"
+                with open(filename, "a", encoding="utf-8") as f:
+                    f.write(line)
                 return self.line, iteration, self.target_chain
         print("No successful combination found after 10000 iterations.")
         return None
@@ -156,5 +166,5 @@ if __name__ == '__main__':
         'Ω',
         # 'S'
     ])
-    target = [4, ['λL'], 2, ['T▲'], 3]
+    target = [5, ['8☐', '9L', '8▲'], 3]
     deck.psv(target=target)
