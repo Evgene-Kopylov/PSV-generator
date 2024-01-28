@@ -1,17 +1,16 @@
 import random
-from typing import List, Optional
-
+from typing import List
 
 class Deck:
     def __init__(self, suits: List[str] = None, nominal: List[str] = None):
         """
         Конструктор класса Deck.
 
-        Parameters:
+        Параметры:
         - suits: список строк, представляющих масти карт.
         - nominal: список строк, представляющих номиналы карт.
 
-        Attributes:
+        Атрибуты:
         - nominal: список строк, представляющих номиналы карт.
         - suits: список строк, представляющих масти карт.
         - deck: список карт в колоде.
@@ -25,12 +24,23 @@ class Deck:
 
     def new_deck(self):
         """
-        Создает новую колоду карт, объединяя номиналы и масти.
+        Создает новую колоду карт, объединяя номиналы и масти,
+        и исключая карты из целевой комбинации.
 
-        Returns:
+        Возвращает:
         - deck: список карт в колоде.
         """
+        # Инициализация колоды без исключаемых карт
         self.deck = [f"{nominal}{suit}" for suit in self.suits for nominal in self.nominal]
+
+        # Удаление карт из целевой комбинации
+        for item in self.target:
+            if isinstance(item, str):
+                self.deck.remove(item)
+            elif isinstance(item, list):
+                for card in item:
+                    self.deck.remove(card)
+
         return self.deck
 
     def shuffle_deck(self):
@@ -41,14 +51,14 @@ class Deck:
         """
         Берет заданное количество карт из колоды.
 
-        Parameters:
+        Параметры:
         - n: количество карт для взятия.
 
-        Returns:
+        Возвращает:
         - taken_cards: список взятых карт.
         """
         if n > len(self.deck):
-            raise ValueError("Not enough cards in the deck")
+            raise ValueError("Недостаточно карт в колоде")
         taken_cards = self.deck[:n]
         self.deck = self.deck[n:]  # Убирает взятые карты из колоды
         return taken_cards
@@ -57,10 +67,10 @@ class Deck:
         """
         Заменяет числа в списке на соответствующее количество карт.
 
-        Parameters:
+        Параметры:
         - target: список, включающий числа и/или строки номиналов карт.
 
-        Returns:
+        Возвращает:
         - replaced: список, где числа заменены на соответствующее количество карт.
         """
         replaced = []
@@ -75,11 +85,11 @@ class Deck:
         """
         Проверяет комбинацию карт по правилу схождения пасьянса.
 
-        Parameters:
+        Параметры:
         - chain: список карт для проверки.
         - show: флаг для вывода промежуточных результатов.
 
-        Returns:
+        Возвращает:
         - True, если комбинация карт является пасьянсом, иначе False.
         """
         n = len(chain)
@@ -102,10 +112,10 @@ class Deck:
         """
         Собирает целевую комбинацию карт из заданного списка.
 
-        Parameters:
+        Параметры:
         - target: список, представляющий целевую комбинацию карт.
 
-        Returns:
+        Возвращает:
         - target_chain: целевая комбинация карт.
         """
         self.target_chain = []
@@ -120,10 +130,10 @@ class Deck:
         """
         Выполняет пасьянс, пока не получится, и выводит успешную комбинацию, номер попытки и последовательность сложения.
 
-        Parameters:
+        Параметры:
         - target: список, представляющий целевую комбинацию карт.
 
-        Returns:
+        Возвращает:
         - line: успешная комбинация карт.
         - iteration: номер попытки.
         - sequence: последовательность сложения.
@@ -149,7 +159,7 @@ class Deck:
                 with open(filename, "a", encoding="utf-8") as f:
                     f.write(line)
                 return self.line, iteration, self.target_chain
-        print("No successful combination found after 10000 iterations.")
+        print("Не удалось найти успешную комбинацию после 10000 попыток.")
         return None
 
     def print_deck(self):
@@ -164,7 +174,8 @@ if __name__ == '__main__':
         'L',
         '▲',
         'Ω',
-        # 'S'
+        # 'S',
+        '♡',
     ])
-    target = [5, ['8☐', '9L', '8▲'], 3]
+    target = [5, ['2♡', '4☐'], 5]
     deck.psv(target=target)
