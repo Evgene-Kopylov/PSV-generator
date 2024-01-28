@@ -1,5 +1,7 @@
 import random
 from typing import List
+from colorama import Fore, Style
+
 
 class Deck:
     def __init__(self, suits: List[str] = None, nominal: List[str] = None):
@@ -81,7 +83,7 @@ class Deck:
                 replaced.append(item)
         return replaced
 
-    def chain_check(self, chain: List, show: bool = False):
+    def chain_check(self, chain: List) -> (bool, List):
         """
         Проверяет комбинацию карт по правилу схождения пасьянса.
 
@@ -93,19 +95,25 @@ class Deck:
         - True, если комбинация карт является пасьянсом, иначе False.
         """
         n = len(chain)
-        if show:
-            print(self.line)
-            print(chain)
+        report = ''
         for _ in range(n * n):
             for i in range(len(chain) - 2):
                 if len(chain) == 2:
                     return chain
                 if chain[i][:-1] == chain[i + 2][:-1] or chain[i][-1] == chain[i + 2][-1]:
                     pop = chain[i]
+                    line = "\n" + "  ".join(chain[:i]) + ("  " if chain[:i] else '') \
+                           + Fore.BLUE + chain[i] + Style.RESET_ALL \
+                           + "  " + chain[(i + 1)] \
+                           + Fore.BLUE + '  ' + chain[i + 2] + '  ' + Style.RESET_ALL \
+                           + "  ".join(chain[(i + 3):])
+                    line += "\n" + " " * (line.index(chain[i]) - 6) \
+                            + Fore.WHITE + chain[i] + Style.RESET_ALL
                     chain.pop(i)
-                    if show:
-                        print(chain, pop)
+                    report += line
                     break
+        if len(chain) == 2:
+            print(report)
         return len(chain) == 2, chain
 
     def collect_target_chain(self, target: List[int | List[str]]) -> List[str]:
