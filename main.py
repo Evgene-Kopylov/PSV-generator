@@ -3,6 +3,40 @@ from typing import List
 from colorama import Fore, Style
 
 
+def chain_check(chain: List) -> (bool, List):
+    """
+    Проверяет комбинацию карт по правилу схождения пасьянса.
+
+    Параметры:
+    - chain: список карт для проверки.
+    - show: флаг для вывода промежуточных результатов.
+
+    Возвращает:
+    - True, если комбинация карт является пасьянсом, иначе False.
+    """
+    n = len(chain)
+    report = ''
+    for _ in range(n * n):
+        for i in range(len(chain) - 2):
+            if len(chain) == 2:
+                return chain
+            if chain[i][:-1] == chain[i + 2][:-1] or chain[i][-1] == chain[i + 2][-1]:
+                pop = chain[i]
+                line = "\n" + "  ".join(chain[:i]) + ("  " if chain[:i] else '') \
+                       + Fore.BLUE + chain[i] + Style.RESET_ALL \
+                       + "  " + chain[(i + 1)] \
+                       + Fore.BLUE + '  ' + chain[i + 2] + '  ' + Style.RESET_ALL \
+                       + "  ".join(chain[(i + 3):])
+                line += "\n" + " " * (line.index(chain[i]) - 6) \
+                        + Fore.WHITE + chain[i] + Style.RESET_ALL
+                chain.pop(i)
+                report += line
+                break
+    if len(chain) == 2:
+        print(report)
+    return len(chain) == 2, chain
+
+
 class Deck:
     def __init__(self, suits: List[str] = None, nominal: List[str] = None):
         """
@@ -39,9 +73,6 @@ class Deck:
         for item in self.target:
             if isinstance(item, str):
                 self.deck.remove(item)
-            elif isinstance(item, list):
-                for card in item:
-                    self.deck.remove(card)
 
         return self.deck
 
@@ -83,39 +114,6 @@ class Deck:
                 replaced.append(item)
         return replaced
 
-    def chain_check(self, chain: List) -> (bool, List):
-        """
-        Проверяет комбинацию карт по правилу схождения пасьянса.
-
-        Параметры:
-        - chain: список карт для проверки.
-        - show: флаг для вывода промежуточных результатов.
-
-        Возвращает:
-        - True, если комбинация карт является пасьянсом, иначе False.
-        """
-        n = len(chain)
-        report = ''
-        for _ in range(n * n):
-            for i in range(len(chain) - 2):
-                if len(chain) == 2:
-                    return chain
-                if chain[i][:-1] == chain[i + 2][:-1] or chain[i][-1] == chain[i + 2][-1]:
-                    pop = chain[i]
-                    line = "\n" + "  ".join(chain[:i]) + ("  " if chain[:i] else '') \
-                           + Fore.BLUE + chain[i] + Style.RESET_ALL \
-                           + "  " + chain[(i + 1)] \
-                           + Fore.BLUE + '  ' + chain[i + 2] + '  ' + Style.RESET_ALL \
-                           + "  ".join(chain[(i + 3):])
-                    line += "\n" + " " * (line.index(chain[i]) - 6) \
-                            + Fore.WHITE + chain[i] + Style.RESET_ALL
-                    chain.pop(i)
-                    report += line
-                    break
-        if len(chain) == 2:
-            print(report)
-        return len(chain) == 2, chain
-
     def collect_target_chain(self, target: List[int | List[str]]) -> List[str]:
         """
         Собирает целевую комбинацию карт из заданного списка.
@@ -130,8 +128,8 @@ class Deck:
         for item in target:
             if isinstance(item, int):
                 self.target_chain += self.take_cards(item)
-            elif isinstance(item, list):
-                self.target_chain += item
+            elif isinstance(item, str):
+                self.target_chain.append(item)
         return self.target_chain
 
     def psv(self, target: List[str]):
@@ -153,14 +151,14 @@ class Deck:
             self.target_chain = self.collect_target_chain(target)
             self.line = "  ".join(self.target_chain)
             assert len(self.target_chain) > 2, "Длина целевой цепочки должна быть больше 2"
-            folded, ending = self.chain_check(self.target_chain)
+            folded, ending = chain_check(self.target_chain)
             if folded:
                 line = f"""
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-Целевая: {self.target}
+Целевая: {"  ".join(str(x) for x in self.target)}
 Попытка: {iteration}
 Комбинация: {self.line}
-Остаток от сложения: {ending}
+Остаток от сложения: {"  ".join(ending)}
 """
                 print(line)
                 filename = "history.txt"
@@ -181,9 +179,13 @@ if __name__ == '__main__':
         '☐',
         'L',
         '▲',
-        'Ω',
-        # 'S',
+        # 'Ω',
+        'S',
         '♡',
+        '○',
     ])
-    target = [5, ['2♡', '4☐'], 5]
+    target = [3, '4☐', 2, '7☐', 4, '8○', 5]
     deck.psv(target=target)
+    # print(deck.chain_check(
+    #     ['6♡', '3○', '5♡', '♛○', '4☐', 'T○', 'λS', '7☐', 'λ☐', 'ß○', '6☐', 'ßL', '8○', '5L', '9○', '9♡', 'TL', '9☐']
+    # ))
