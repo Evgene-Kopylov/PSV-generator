@@ -51,7 +51,7 @@ class Deck:
         - suits: список строк, представляющих масти карт.
         - deck: список карт в колоде.
         """
-        self.nominal = nominal or ['T', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'ß', 'λ', '♛']
+        self.nominal = nominal or ['T', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'β', 'λ', '♛']
         self.suits = suits or ['♠', '♡', '◊', '♣']
         self.deck = None
         self.target = None
@@ -72,7 +72,11 @@ class Deck:
         # Удаление карт из целевой комбинации
         for item in self.target:
             if isinstance(item, str):
-                self.deck.remove(item)
+                try:
+                    self.deck.remove(item)
+                except ValueError as e:
+                    print(f"Целевая карта {item=} отсутствует в колоде.")
+                    raise e
 
         return self.deck
 
@@ -180,11 +184,11 @@ if __name__ == '__main__':
         'L',
         '▲',
         # 'Ω',
-        'S',
+        # 'S',
         '♡',
         '○',
     ])
-    target = [3, '4☐', 2, '7☐', 4, '8○', 5]
+    target = [5, '2○', 'β☐', 4, '5L', 4]
     deck.psv(target=target)
     # print(deck.chain_check(
     #     ['6♡', '3○', '5♡', '♛○', '4☐', 'T○', 'λS', '7☐', 'λ☐', 'ß○', '6☐', 'ßL', '8○', '5L', '9○', '9♡', 'TL', '9☐']
