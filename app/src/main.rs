@@ -92,9 +92,15 @@ impl Deck {
         irs.shuffle(&mut self.deck, &mut rng);
     }
 
-    fn as_vec(self) -> Vec<Card> {
-        self.deck
+    fn as_vec(&self) -> Vec<Card> {
+        self.deck.clone()
     }
+
+
+    fn take(&self, n: usize) -> Vec<Card> {
+        self.deck.clone().iter().take(n).cloned().collect()
+    }
+
 
 }
 
@@ -108,18 +114,22 @@ impl MySpread {
     }
 
     fn patience(&mut self, target: Vec<&str>) -> () {
+        self.deck.shuffle();
         let mut target_chain = vec![];
         for item in target {
             if item.chars().all(|c| c.is_digit(10)) {
-                // println!("digit");
+                dbg!(item);
+                let n: usize = item.parse().unwrap();
+                dbg!(n);
+
+                let part: Vec<Card> = self.deck.clone().take(n);
+                target_chain.extend(part);
             } else {
-                // println!("not digit");
                 target_chain.push(Card::from_str(item));
             }
+            dbg!(&target_chain.len());
         }
-        // dbg!(target_chain);
-        self.deck.shuffle();
-        dbg!(&self.deck.clone().as_vec()[..3]);
+
     }
 
 
