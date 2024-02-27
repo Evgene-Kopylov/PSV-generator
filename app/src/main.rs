@@ -1,16 +1,28 @@
 #![allow(unused)]  // FIXME
 
+use std::collections::binary_heap::Iter;
 
+
+#[derive(Debug)]
 struct Card {
     suit: String,
     nominal: String,
 }
+
 
 impl Card {
     fn new(suit: String, nominal: String) -> Self {
         Self {
             suit,
             nominal,
+        }
+    }
+
+    fn from_str(s: &str) -> Self {
+        let mut v: Vec<char> = s.chars().collect();
+        Self {
+            suit: v.pop().unwrap().to_string(),
+            nominal: v.iter().collect(),
         }
     }
 }
@@ -58,14 +70,18 @@ impl Deck {
 
     fn psv(&self, target: Vec<&str>) -> () {
         // dbg!(target);
+        // dbg!(&self.deck);
+        let mut target_chain = vec![];
         for item in target {
             println!("{:}", item);
             if item.chars().all(|c| c.is_digit(10)) {
                 println!("digit");
             } else {
                 println!("not digit");
+                target_chain.push(Card::from_str(item));
             }
         }
+        dbg!(target_chain);
     }
 
 }
