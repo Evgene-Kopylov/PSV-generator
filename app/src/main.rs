@@ -1,5 +1,6 @@
 #![allow(unused)]  // FIXME
 
+use std::clone;
 use std::{collections::binary_heap::Iter, default};
 use rand::seq::SliceRandom;
 use rand::Rng;
@@ -92,13 +93,13 @@ impl Deck {
         irs.shuffle(&mut self.deck, &mut rng);
     }
 
-    fn as_vec(&self) -> Vec<Card> {
-        self.deck.clone()
-    }
+    // fn as_vec(&self) -> Vec<Card> {
+    //     self.deck.clone()
+    // }
 
 
-    fn take(&self, n: usize) -> Vec<Card> {
-        self.deck.clone().iter().take(n).cloned().collect()
+    fn drain(&mut self, n: usize) -> Vec<Card> {
+        self.deck.drain(..n).collect()
     }
 
 
@@ -118,13 +119,15 @@ impl MySpread {
         let mut target_chain = vec![];
         for item in target {
             if item.chars().all(|c| c.is_digit(10)) {
-                dbg!(item);
                 let n: usize = item.parse().unwrap();
-                dbg!(n);
-
-                let part: Vec<Card> = self.deck.clone().take(n);
+                let part: Vec<Card> = self.deck.drain(n);
                 target_chain.extend(part);
             } else {
+                let card = Card::from_str(item);
+
+                let (a, i): (Vec<Card>, Vec<Card>) = 
+                self.deck.clone().deck.into_iter().partition(|c| c == &card);
+
                 target_chain.push(Card::from_str(item));
             }
             dbg!(&target_chain.len());
