@@ -92,7 +92,7 @@ impl Deck {
         irs.shuffle(&mut self.deck, &mut rng);
     }
 
-    fn vec(self) -> Vec<Card> {
+    fn as_vec(self) -> Vec<Card> {
         self.deck
     }
 
@@ -119,7 +119,7 @@ impl MySpread {
         }
         // dbg!(target_chain);
         self.deck.shuffle();
-        dbg!(&self.deck.clone().vec()[..3]);
+        dbg!(&self.deck.clone().as_vec()[..3]);
     }
 
 
