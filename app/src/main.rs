@@ -1,12 +1,33 @@
 #![allow(unused)]  // FIXME
 
-use std::collections::binary_heap::Iter;
+use std::{collections::binary_heap::Iter, default};
+use rand::seq::SliceRandom;
+use rand::Rng;
+
+use shuffle::shuffler::Shuffler;
+use shuffle::irs::Irs;
+use rand::rngs::mock::StepRng;
 
 
-#[derive(Debug)]
+
+#[derive(Debug, Default, Clone, PartialEq)]
 struct Card {
     suit: String,
     nominal: String,
+}
+
+
+#[derive(Debug, PartialEq, Clone)]
+struct Deck {
+    suits: Vec<String>,
+    nominals: Vec<String>,
+    deck: Vec<Card>,
+}
+
+
+struct MySpread {
+    deck: Deck,
+    target_chain: Vec<Card>,
 }
 
 
@@ -27,12 +48,6 @@ impl Card {
     }
 }
 
-
-struct Deck {
-    suits: Vec<String>,
-    nominals: Vec<String>,
-    deck: Vec<Card>,
-}
 
 
 
@@ -68,25 +83,47 @@ impl Deck {
         }
     }
 
-    fn psv(&self, target: Vec<&str>) -> () {
-        // dbg!(target);
-        // dbg!(&self.deck);
-        let mut target_chain = vec![];
-        for item in target {
-            println!("{:}", item);
-            if item.chars().all(|c| c.is_digit(10)) {
-                println!("digit");
-            } else {
-                println!("not digit");
-                target_chain.push(Card::from_str(item));
-            }
-        }
-        dbg!(target_chain);
+    fn shuffle(&mut self) {
+
+        let mut rng = StepRng::new(2, 13);
+        let mut irs = Irs::default();
+        
+        
+        irs.shuffle(&mut self.deck, &mut rng);
+    }
+
+    fn vec(self) -> Vec<Card> {
+        self.deck
     }
 
 }
 
 
+impl MySpread {
+    fn new(deck: Deck) -> Self {
+        Self {
+            deck,
+            target_chain: vec![],
+        }
+    }
+
+    fn patience(&mut self, target: Vec<&str>) -> () {
+        let mut target_chain = vec![];
+        for item in target {
+            if item.chars().all(|c| c.is_digit(10)) {
+                // println!("digit");
+            } else {
+                // println!("not digit");
+                target_chain.push(Card::from_str(item));
+            }
+        }
+        // dbg!(target_chain);
+        self.deck.shuffle();
+        dbg!(&self.deck.clone().vec()[..3]);
+    }
+
+
+}
 
 
 fn main() {
@@ -98,5 +135,6 @@ fn main() {
         nominal
     );
     let target = vec!["2", "2○", "β☐", "4", "5L", "2"];
-    deck.psv(target);
+    let mut my_spread = MySpread::new(deck);
+    my_spread.patience(target);
 }
