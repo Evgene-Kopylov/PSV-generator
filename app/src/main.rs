@@ -143,7 +143,7 @@ impl MySpread {
 
 
                 if (&chain[j].suit == &chain[j+2].suit) || (&chain[j].nominal == &chain[j+2].nominal) {
-                    line += &format!("{}{}\n", chain[j+1].nominal, chain[j+1].suit);
+                    line += &format!("{}{}\n", chain[j+1].nominal.blue(), chain[j+1].suit.yellow());
                     
                     chain.remove(j+1);
 
