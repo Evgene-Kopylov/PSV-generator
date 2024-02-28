@@ -17,6 +17,7 @@ struct Card {
 struct Deck {
     suits: Vec<String>,
     nominals: Vec<String>,
+    new_deck: Vec<Card>,
     deck: Vec<Card>,
 }
 
@@ -62,11 +63,11 @@ impl Deck {
             .map(|n| n.to_string())
             .collect();
 
-        let mut deck: Vec<Card> = vec![];
+        let mut new_deck: Vec<Card> = vec![];
         for s in &suits {
             for n in &nominals {
                 let card = Card::new(s.clone(), n.clone());
-                deck.push(card.clone());
+                new_deck.push(card.clone());
                 // println!("{:}{:}", &card.suit, &card.nominal);
             }
         }
@@ -74,7 +75,8 @@ impl Deck {
         Self {
             suits,
             nominals,
-            deck,
+            new_deck: new_deck.clone(),
+            deck: new_deck,
         }
     }
 
@@ -97,6 +99,10 @@ impl Deck {
         card
     }
 
+    fn refresh_deck(&mut self) -> () {
+        self.deck = self.new_deck.clone();
+    }
+
 }
 
 
@@ -109,13 +115,19 @@ impl MySpread {
     }
 
     fn chain_check(&self, chain: Vec<Card>) -> bool {
-        true
+        for i in 0..chain.len() {
+            if chain.len() == 2 {
+                return true;
+            }
+        }
+        false
     }
 
     fn patience(&mut self, target: Vec<&str>) -> () {
         
-        for i in 0..10000 {
-            
+        for i in 0..3000 {
+            self.deck.refresh_deck();
+
             self.deck.shuffle();
             let mut target_chain = vec![];
 
@@ -152,13 +164,13 @@ impl MySpread {
             line += "  ";
             
         }
-        dbg!(line);
+        // dbg!(line);
         let _line = chain.iter()
         .map(
             |c| format!("{}{}", c.nominal, c.suit)
         ).collect::<Vec<_>>()
         .join("  ");
-        dbg!(_line);
+        // dbg!(_line);
     }
 }
 
