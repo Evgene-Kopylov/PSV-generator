@@ -1,10 +1,5 @@
 #![allow(unused)]  // FIXME
 
-use std::clone;
-use std::{collections::binary_heap::Iter, default};
-use rand::seq::SliceRandom;
-use rand::Rng;
-
 use shuffle::shuffler::Shuffler;
 use shuffle::irs::Irs;
 use rand::rngs::mock::StepRng;
