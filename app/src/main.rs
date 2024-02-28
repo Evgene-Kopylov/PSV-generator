@@ -1,4 +1,4 @@
-// #![allow(unused)]  // FIXME
+#![allow(unused)]  // FIXME
 
 use shuffle::shuffler::Shuffler;
 use shuffle::irs::Irs;
@@ -108,22 +108,39 @@ impl MySpread {
         }
     }
 
-    fn patience(&mut self, target: Vec<&str>) -> () {
-        self.deck.shuffle();
-        let mut target_chain = vec![];
+    fn chain_check(&self, chain: Vec<Card>) -> bool {
+        true
+    }
 
-        for item in target {
-            if item.chars().all(|c| c.is_digit(10)) {
-                let n: usize = item.parse().unwrap();
-                let part: Vec<Card> = self.deck.drain(n);
-                target_chain.extend(part);
-            } else {
-                let card = Card::from_str(item);
-                self.deck.pop_card(card.clone());
-                target_chain.push(card);
+    fn patience(&mut self, target: Vec<&str>) -> () {
+        
+        for i in 0..10000 {
+            
+            self.deck.shuffle();
+            let mut target_chain = vec![];
+
+            for item in &target {
+                if item.chars().all(|c| c.is_digit(10)) {
+                    let n: usize = item.parse().unwrap();
+                    let part: Vec<Card> = self.deck.drain(n);
+                    target_chain.extend(part);
+                } else {
+                    let card = Card::from_str(item);
+                    self.deck.pop_card(card.clone());
+                    target_chain.push(card);
+                }
             }
+            self.print_chain(target_chain.clone());
+            
+            if self.chain_check(target_chain.clone()) {
+                println!("Итерация: {:}", i);
+                break;
+            }
+
+
         }
-        self.print_chain(target_chain);
+
+
 
     }
 
