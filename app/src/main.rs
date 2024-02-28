@@ -118,8 +118,8 @@ impl MySpread {
         }
     }
 
-    fn chain_check(&self, mut chain: Vec<Card>) -> bool {
-        let save = chain.clone();
+    fn chain_check(&self, chain: Vec<Card>) -> bool {
+        let mut chain = chain.clone();
 
         let max = chain.len();
 
@@ -141,7 +141,7 @@ impl MySpread {
 
     fn patience(&mut self, target: Vec<&str>) -> () {
         
-        for i in 0..1000 {
+        for i in 0..10000 {
             self.deck.refresh_deck();
 
             self.deck.shuffle();
@@ -201,7 +201,7 @@ fn main() {
         suits, 
         nominal
     );
-    let target = vec!["4", "2○", "β☐", "2☐", "3○"];
+    let target = vec!["40", "2○", "β☐", "2☐", "3○"];
     let mut my_spread = MySpread::new(deck);
     my_spread.patience(target);
     let duration = start.elapsed();
