@@ -3,7 +3,7 @@
 use shuffle::shuffler::Shuffler;
 use shuffle::irs::Irs;
 use rand::rngs::mock::StepRng;
-
+use std::time::Instant;
 
 
 #[derive(Debug, Default, Clone, PartialEq)]
@@ -95,8 +95,12 @@ impl Deck {
 
 
     fn pop_card(&mut self, card: Card) -> Card {
-        self.deck.remove(11);
+        let (matched, remaining): (Vec<Card>, Vec<Card>) = self.deck.clone()
+            .into_iter()
+            .partition(|c| *c == card.clone()); 
+        self.deck = remaining;
         card
+        // matched.first().cloned().expect("карта не обнаружена в колоде")
     }
 
     fn refresh_deck(&mut self) -> () {
@@ -119,13 +123,14 @@ impl MySpread {
             if chain.len() == 2 {
                 return true;
             }
+            // return true;
         }
         false
     }
 
     fn patience(&mut self, target: Vec<&str>) -> () {
         
-        for i in 0..3000 {
+        for i in 0..1000 {
             self.deck.refresh_deck();
 
             self.deck.shuffle();
@@ -138,7 +143,8 @@ impl MySpread {
                     target_chain.extend(part);
                 } else {
                     let card = Card::from_str(item);
-                    self.deck.pop_card(card.clone());
+                    let pop = self.deck.pop_card(card.clone());
+                    // assert!(card == pop.unwrap());
                     target_chain.push(card);
                 }
             }
@@ -176,6 +182,7 @@ impl MySpread {
 
 
 fn main() {
+    let start = Instant::now();
     println!("_+_+_+_++_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_++_+_+_+_+_+_+_+_+");
     let suits = vec!["☐", "L", "▲", "♡", "○"];
     let nominal = vec!["T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛"];
@@ -186,4 +193,7 @@ fn main() {
     let target = vec!["2", "2○", "β☐", "4", "5L", "2"];
     let mut my_spread = MySpread::new(deck);
     my_spread.patience(target);
+    let duration = start.elapsed();
+
+    println!("Time elapsed in expensive_function() is: {:?}", duration);
 }
