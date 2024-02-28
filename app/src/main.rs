@@ -1,4 +1,4 @@
-#![allow(unused)]  // FIXME
+// #![allow(unused)]  // FIXME
 
 use shuffle::shuffler::Shuffler;
 use shuffle::irs::Irs;
@@ -23,7 +23,7 @@ struct Deck {
 
 struct MySpread {
     deck: Deck,
-    target_chain: Vec<Card>,
+    // target_chain: Vec<Card>,
 }
 
 
@@ -84,7 +84,7 @@ impl Deck {
         let mut irs = Irs::default();
         
         
-        irs.shuffle(&mut self.deck, &mut rng);
+        let _ = irs.shuffle(&mut self.deck, &mut rng);
     }
 
     fn drain(&mut self, n: usize) -> Vec<Card> {
@@ -104,7 +104,7 @@ impl MySpread {
     fn new(deck: Deck) -> Self {
         Self {
             deck,
-            target_chain: vec![],
+            // target_chain: vec![],
         }
     }
 
@@ -150,7 +150,7 @@ fn main() {
     println!("_+_+_+_++_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_++_+_+_+_+_+_+_+_+");
     let suits = vec!["☐", "L", "▲", "♡", "○"];
     let nominal = vec!["T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛"];
-    let mut deck = Deck::new(
+    let deck = Deck::new(
         suits, 
         nominal
     );
