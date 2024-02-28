@@ -3,8 +3,9 @@
 use shuffle::shuffler::Shuffler;
 use shuffle::irs::Irs;
 use rand::rngs::mock::StepRng;
+use std::io::{repeat, Read};
 use std::time::Instant;
-
+use colored::*;
 
 #[derive(Debug, Default, Clone, PartialEq)]
 struct Card {
@@ -121,6 +122,7 @@ impl MySpread {
     fn chain_fold_droaw(&self, chain: Vec<Card>) -> bool {
         let mut chain = chain.clone();
         let mut line: String = String::new();
+        line += "\n### Сведение\n\n";
         line += &chain.iter()
             .map(|c| format!("{}{}", c.nominal, c.suit))
             .collect::<Vec<_>>()
@@ -136,7 +138,10 @@ impl MySpread {
                 return true;
             }
             for j in 0..current - 2 {
-                line += "    ";
+                line += "   ";
+                line += &" ".repeat(chain[j].nominal.chars().count());
+
+
                 if (&chain[j].suit == &chain[j+2].suit) || (&chain[j].nominal == &chain[j+2].nominal) {
                     line += &format!("{}{}\n", chain[j+1].nominal, chain[j+1].suit);
                     
@@ -163,7 +168,6 @@ impl MySpread {
         for _ in 0..max {
             let current = chain.len();
             if current <= 2 {
-                dbg!("_+_+_+_+ Сошлось +_+_+_+_");
                 return true;
             }
             for j in 0..current - 2 {
@@ -201,6 +205,7 @@ impl MySpread {
             if self.chain_check(target_chain.clone()) {
                 self.chain_fold_droaw(target_chain.clone());
                 println!("Итерация: {:}", i);
+                
                 break;
             }
 
@@ -232,7 +237,6 @@ impl MySpread {
 
 fn main() {
     let start = Instant::now();
-    println!("_+_+_+_++_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_+_++_+_+_+_+_+_+_+_+");
     let suits = vec!["☐", "L", "▲", "♡", "○"];
     let nominal = vec!["T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛"];
     let deck = Deck::new(
@@ -240,7 +244,7 @@ fn main() {
         nominal
     );
     // let target = vec!["40", "2○", "β☐", "2☐", "3○"];
-    let target = vec!["4", "2○", "β☐", "2☐", "3○"];
+    let target = vec!["4", "2○", "β☐", "2☐", "3○", "9"];
     let mut my_spread = MySpread::new(deck);
     my_spread.patience(target);
     let duration = start.elapsed();
