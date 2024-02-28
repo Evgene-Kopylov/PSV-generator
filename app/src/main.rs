@@ -4,6 +4,9 @@ use shuffle::irs::Irs;
 use shuffle::shuffler::Shuffler;
 use std::time::Instant;
 
+mod settings;
+use crate::settings::MAX_ITERATIONS;
+
 #[derive(Debug, Default, Clone, PartialEq)]
 struct Card {
     suit: String,
@@ -144,7 +147,7 @@ impl MySpread {
     }
 
     fn patience(&mut self, target: Vec<&str>) -> () {
-        for i in 0..10000 {
+        for i in 0..MAX_ITERATIONS {
             self.deck.refresh_deck();
             self.deck.shuffle();
             let mut target_chain = vec![];
