@@ -54,26 +54,25 @@ impl Card {
 
 impl Deck {
     fn new(
+        suits: Vec<&str>,
         nominals: Vec<&str>, 
-        suits: Vec<&str>
     ) -> Self {
         let suits: Vec<String> = suits
             .iter()
-            .map(|s| s
-                .to_string())
+            .map(|s| s.to_string())
             .collect();
 
         let nominals: Vec<String> = nominals
             .iter()
-            .map(|s| s
-                .to_string())
+            .map(|n| n.to_string())
             .collect();
 
         let mut deck: Vec<Card> = vec![];
         for s in &suits {
             for n in &nominals {
                 let card = Card::new(s.clone(), n.clone());
-                deck.push(card);
+                deck.push(card.clone());
+                // println!("{:}{:}", &card.suit, &card.nominal);
             }
         }
 
@@ -93,15 +92,15 @@ impl Deck {
         irs.shuffle(&mut self.deck, &mut rng);
     }
 
-    // fn as_vec(&self) -> Vec<Card> {
-    //     self.deck.clone()
-    // }
-
-
     fn drain(&mut self, n: usize) -> Vec<Card> {
         self.deck.drain(..n).collect()
     }
 
+
+    fn pop_card(&mut self, card: Card) -> Card {
+        self.deck.remove(11);
+        card
+    }
 
 }
 
@@ -117,6 +116,7 @@ impl MySpread {
     fn patience(&mut self, target: Vec<&str>) -> () {
         self.deck.shuffle();
         let mut target_chain = vec![];
+
         for item in target {
             if item.chars().all(|c| c.is_digit(10)) {
                 let n: usize = item.parse().unwrap();
@@ -124,18 +124,30 @@ impl MySpread {
                 target_chain.extend(part);
             } else {
                 let card = Card::from_str(item);
-
-                let (a, i): (Vec<Card>, Vec<Card>) = 
-                self.deck.clone().deck.into_iter().partition(|c| c == &card);
-
-                target_chain.push(Card::from_str(item));
+                self.deck.pop_card(card.clone());
+                target_chain.push(card);
             }
-            dbg!(&target_chain.len());
         }
+        self.print_chain(target_chain);
 
     }
 
-
+    fn print_chain(&self, chain: Vec<Card>) -> () {
+        let mut line = String::new();
+        for c in &chain {
+            line += &c.nominal;
+            line += &c.suit;
+            line += "  ";
+            
+        }
+        dbg!(line);
+        let _line = chain.iter()
+        .map(
+            |c| format!("{}{}", c.nominal, c.suit)
+        ).collect::<Vec<_>>()
+        .join("  ");
+        dbg!(_line);
+    }
 }
 
 
