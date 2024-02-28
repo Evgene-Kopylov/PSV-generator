@@ -4,7 +4,6 @@ use colored::*;
 use rand::rngs::mock::StepRng;
 use shuffle::irs::Irs;
 use shuffle::shuffler::Shuffler;
-use std::io::{repeat, Read};
 use std::time::Instant;
 
 #[derive(Debug, Default, Clone, PartialEq)]
@@ -72,16 +71,6 @@ impl Deck {
 
     fn drain(&mut self, n: usize) -> Vec<Card> {
         self.deck.drain(..n).collect()
-    }
-
-    fn pop_card(&mut self, card: Card) -> Card {
-        let (matched, remaining): (Vec<Card>, Vec<Card>) = self
-            .deck
-            .clone()
-            .into_iter()
-            .partition(|c| *c == card.clone());
-        self.deck = remaining;
-        card
     }
 
     fn refresh_deck(&mut self) -> () {
@@ -180,8 +169,6 @@ impl MySpread {
                     target_chain.extend(part);
                 } else {
                     let card = Card::from_str(item);
-                    let pop = self.deck.pop_card(card.clone());
-                    // assert!(card == pop.unwrap());
                     target_chain.push(card);
                 }
             }
