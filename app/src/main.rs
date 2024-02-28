@@ -100,7 +100,6 @@ impl Deck {
             .partition(|c| *c == card.clone()); 
         self.deck = remaining;
         card
-        // matched.first().cloned().expect("карта не обнаружена в колоде")
     }
 
     fn refresh_deck(&mut self) -> () {
@@ -118,9 +117,47 @@ impl MySpread {
         }
     }
 
+
+    fn chain_fold_droaw(&self, chain: Vec<Card>) -> bool {
+        let mut chain = chain.clone();
+        let mut line: String = String::new();
+        line += &chain.iter()
+            .map(|c| format!("{}{}", c.nominal, c.suit))
+            .collect::<Vec<_>>()
+            .join("  ");
+        line += "\n";
+
+        let max = chain.len();
+
+        for _ in 0..max {
+            let current = chain.len();
+            if current <= 2 {
+                println!("{}", line);
+                return true;
+            }
+            for j in 0..current - 2 {
+                line += "    ";
+                if (&chain[j].suit == &chain[j+2].suit) || (&chain[j].nominal == &chain[j+2].nominal) {
+                    line += &format!("{}{}\n", chain[j+1].nominal, chain[j+1].suit);
+                    
+                    chain.remove(j+1);
+
+                    line += &chain.iter()
+                        .map(|c| format!("{}{}", c.nominal, c.suit))
+                        .collect::<Vec<_>>()
+                        .join("  ");
+                    line += "\n";
+                    break;
+                }
+            }
+        }
+        false
+    }
+
+
     fn chain_check(&self, chain: Vec<Card>) -> bool {
         let mut chain = chain.clone();
-
+        
         let max = chain.len();
 
         for _ in 0..max {
@@ -130,8 +167,8 @@ impl MySpread {
                 return true;
             }
             for j in 0..current - 2 {
-                if (&chain[j].suit == &chain[j+2].suit) || (&chain[j].nominal == &chain[j+2].nominal) {
-                    chain.remove(j+1);
+                                if (&chain[j].suit == &chain[j+2].suit) || (&chain[j].nominal == &chain[j+2].nominal) {
+                                        chain.remove(j+1);
                     break;
                 }
             }
@@ -162,6 +199,7 @@ impl MySpread {
             self.print_chain(target_chain.clone());
             
             if self.chain_check(target_chain.clone()) {
+                self.chain_fold_droaw(target_chain.clone());
                 println!("Итерация: {:}", i);
                 break;
             }
@@ -201,7 +239,8 @@ fn main() {
         suits, 
         nominal
     );
-    let target = vec!["40", "2○", "β☐", "2☐", "3○"];
+    // let target = vec!["40", "2○", "β☐", "2☐", "3○"];
+    let target = vec!["4", "2○", "β☐", "2☐", "3○"];
     let mut my_spread = MySpread::new(deck);
     my_spread.patience(target);
     let duration = start.elapsed();
