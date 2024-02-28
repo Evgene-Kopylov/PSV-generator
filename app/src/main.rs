@@ -118,12 +118,23 @@ impl MySpread {
         }
     }
 
-    fn chain_check(&self, chain: Vec<Card>) -> bool {
-        for i in 0..chain.len() {
-            if chain.len() == 2 {
+    fn chain_check(&self, mut chain: Vec<Card>) -> bool {
+        let save = chain.clone();
+
+        let max = chain.len();
+
+        for _ in 0..max {
+            let current = chain.len();
+            if current <= 2 {
+                dbg!("_+_+_+_+ Сошлось +_+_+_+_");
                 return true;
             }
-            // return true;
+            for j in 0..current - 2 {
+                if (&chain[j].suit == &chain[j+2].suit) || (&chain[j].nominal == &chain[j+2].nominal) {
+                    chain.remove(j+1);
+                    break;
+                }
+            }
         }
         false
     }
@@ -190,7 +201,7 @@ fn main() {
         suits, 
         nominal
     );
-    let target = vec!["2", "2○", "β☐", "4", "5L", "2"];
+    let target = vec!["4", "2○", "β☐", "2☐", "3○"];
     let mut my_spread = MySpread::new(deck);
     my_spread.patience(target);
     let duration = start.elapsed();
