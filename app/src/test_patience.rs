@@ -11,7 +11,9 @@ fn test_card_creation() {
 
 #[test]
 fn test_card_creation_from_str() {
-    let card = Card::from_str("3♢");
+    let Some(card) = Card::from_str("3♢") else {
+        panic!();
+    };
     assert_eq!(card.suit, "♢");
     assert_eq!(card.rank, "3");
 }

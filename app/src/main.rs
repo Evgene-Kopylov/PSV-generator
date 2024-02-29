@@ -31,12 +31,12 @@ impl Card {
         Self { suit, rank }
     }
 
-    fn from_str(s: &str) -> Self {
+    fn from_str(s: &str) -> Option<Self> {
         let mut v: Vec<char> = s.chars().collect();
-        Self {
-            suit: v.pop().unwrap().to_string(),
+        Some(Self {
+            suit: v.pop()?.to_string(),
             rank: v.iter().collect(),
-        }
+        })
     }
 }
 
@@ -158,8 +158,7 @@ impl MySpread {
                     let n: usize = item.parse().unwrap();
                     let part: Vec<Card> = self.deck.drain(n);
                     target_chain.extend(part);
-                } else {
-                    let card = Card::from_str(item);
+                } else if let Some(card) = Card::from_str(item) {
                     target_chain.push(card);
                 }
             }
