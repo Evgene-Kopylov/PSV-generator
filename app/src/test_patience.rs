@@ -1,6 +1,5 @@
 #[cfg(test)]
-// mod tests {
-use super::*;
+use crate::patience::*;
 
 #[test]
 fn test_card_creation() {
@@ -98,4 +97,3 @@ fn test_my_spread_perform_chain_operation() {
     ];
     assert!(my_spread.perform_chain_operation(chain));
 }
-// }
