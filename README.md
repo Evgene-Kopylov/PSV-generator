@@ -41,3 +41,11 @@ self.suits = suits or ['♠', '♡', '◊', '♣']
 
 # История
 Расклады логируются в [history.txt](history.txt) 
+
+
+
+# Rust
+## dev
+```terminal
+cargo watch -x fmt -x test -x "run --release"
+```

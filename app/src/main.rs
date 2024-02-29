@@ -5,6 +5,7 @@ use shuffle::shuffler::Shuffler;
 use std::time::Instant;
 
 mod settings;
+mod test_patience;
 use crate::settings::MAX_ITERATIONS;
 
 #[derive(Debug, Default, Clone, PartialEq)]
