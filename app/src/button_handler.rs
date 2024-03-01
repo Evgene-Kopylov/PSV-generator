@@ -13,6 +13,8 @@ pub async fn callback_handler(bot: Bot, q: CallbackQuery) -> HandlerResult {
                 println!("Unknown category, handle accordingly or ignore");
             }
         }
+    } else {
+        dbg!(&callback_data);
     }
 
     Ok(())
@@ -23,7 +25,7 @@ fn split_callback_data(data: &str) -> Option<(&str, &str)> {
     if parts.len() == 2 {
         Some((parts[0], parts[1]))
     } else {
-        Some(("_", "_"))
+        None
     }
 }
 
