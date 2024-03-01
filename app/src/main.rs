@@ -39,5 +39,6 @@ async fn text_message_handler(bot: Bot, msg: Message) -> HandlerResult {
 
 async fn callback_handler(bot: Bot, q: CallbackQuery) -> HandlerResult {
     println!("callback_handler");
+    println!("q.data = {:?}", q.data.unwrap_or("Пусто".to_string()));
     Ok(())
 }
