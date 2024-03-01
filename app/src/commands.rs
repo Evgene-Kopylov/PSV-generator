@@ -1,4 +1,4 @@
-use crate::custom_error_handler::HandlerResult;
+use crate::error_handler::HandlerResult;
 use teloxide::prelude::Requester;
 use teloxide::{types::Message, utils::command::BotCommands, Bot};
 

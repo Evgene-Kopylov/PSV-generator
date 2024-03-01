@@ -1,9 +1,9 @@
 #![allow(unused)]
 
 mod commands;
-mod custom_error_handler;
+mod error_handler;
 use commands::{commands_handler, Command};
-use custom_error_handler::HandlerResult;
+use error_handler::HandlerResult;
 
 use dotenv_codegen::dotenv;
 use patience_lib::patience::MySpread;
