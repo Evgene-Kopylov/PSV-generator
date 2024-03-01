@@ -1,4 +1,4 @@
-use crate::error_handler::{HandlerMessage, HandlerResult};
+use crate::errors::{HandlerMessage, HandlerResult};
 use teloxide::payloads::SendMessageSetters as _;
 use teloxide::prelude::Requester;
 use teloxide::types::{InlineKeyboardButton, InlineKeyboardMarkup};
