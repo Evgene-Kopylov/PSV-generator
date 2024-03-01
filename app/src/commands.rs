@@ -60,7 +60,7 @@ async fn start(bot: Bot, msg: Message) -> HandlerMessage {
 
     let keyboard = make_keyboard(suits, ranks);
     Ok(bot
-        .send_message(msg.chat.id, "Debian versions:")
+        .send_message(msg.chat.id, "Список номиналов (рангов):")
         .reply_markup(keyboard)
         .await?)
 
@@ -73,8 +73,11 @@ fn make_keyboard(suits: Vec<&str>, ranks: Vec<&str>) -> InlineKeyboardMarkup {
 
     let chank_size = 5;
     let mut ranks = ranks.clone();
-    ranks.extend(std::iter::repeat(" ").take(ranks.len() % chank_size));
-
+    let reminder = chank_size - ranks.len() % chank_size;
+    dbg!(reminder);
+    if ranks.len() % chank_size > 0 && reminder > 0 {
+        ranks.extend(std::iter::repeat(" ").take(reminder));
+    }
     for rank in ranks.chunks(chank_size) {
         let row = rank
             .iter()
