@@ -1,8 +1,8 @@
 #![allow(unused)]
 
-mod commands;
+mod command_handler;
 mod errors;
-use commands::{commands_handler, Command};
+use command_handler::{commands_handler, Command};
 use errors::HandlerResult;
 
 use dotenv_codegen::dotenv;
