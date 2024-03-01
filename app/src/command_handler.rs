@@ -1,4 +1,4 @@
-use crate::errors::{HandlerMessage, HandlerResult};
+use crate::errors::{HandlerMessageResult, HandlerResult};
 use teloxide::payloads::SendMessageSetters as _;
 use teloxide::prelude::Requester;
 use teloxide::types::{InlineKeyboardButton, InlineKeyboardMarkup};
@@ -34,7 +34,7 @@ pub async fn commands_handler(bot: Bot, msg: Message, cmd: Command) -> HandlerRe
     Ok(())
 }
 
-async fn start(bot: Bot, msg: Message) -> HandlerMessage {
+async fn start(bot: Bot, msg: Message) -> HandlerMessageResult {
     let suits = vec!["☐", "L", "▲", "♡", "○"];
     let ranks = vec![
         "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
