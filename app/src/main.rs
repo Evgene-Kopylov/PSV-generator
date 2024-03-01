@@ -1,7 +1,9 @@
 #![allow(unused)]
 
+mod button_handler;
 mod command_handler;
 mod errors;
+use button_handler::callback_handler;
 use command_handler::{commands_handler, Command};
 use errors::HandlerResult;
 
@@ -37,8 +39,8 @@ async fn text_message_handler(bot: Bot, msg: Message) -> HandlerResult {
     Ok(())
 }
 
-async fn callback_handler(bot: Bot, q: CallbackQuery) -> HandlerResult {
-    println!("callback_handler");
-    println!("q.data = {:?}", q.data.unwrap_or("Пусто".to_string()));
-    Ok(())
-}
+// async fn callback_handler(bot: Bot, q: CallbackQuery) -> HandlerResult {
+//     println!("callback_handler");
+//     println!("q.data = {:?}", q.data.unwrap_or("Пусто".to_string()));
+//     Ok(())
+// }
