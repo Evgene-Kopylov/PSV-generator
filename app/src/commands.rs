@@ -72,12 +72,13 @@ fn make_keyboard(suits: Vec<&str>, ranks: Vec<&str>) -> InlineKeyboardMarkup {
     let mut keyboard: Vec<Vec<InlineKeyboardButton>> = vec![];
 
     let chank_size = 5;
-    // let mut suits
+    let mut ranks = ranks.clone();
+    ranks.extend(std::iter::repeat(" ").take(ranks.len() % chank_size));
 
     for rank in ranks.chunks(chank_size) {
         let row = rank
             .iter()
-            .map(|&item| InlineKeyboardButton::callback(item.to_owned(), item.to_owned()))
+            .map(|&item| InlineKeyboardButton::callback(item, item))
             .collect();
 
         keyboard.push(row);
