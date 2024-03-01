@@ -1,9 +1,17 @@
 #![allow(unused)]
 
+use std::error::Error;
+
 use dotenv_codegen::dotenv;
 use patience_lib::patience::MySpread;
 
-use teloxide::{prelude::*, types::Update, utils::command::BotCommands};
+use teloxide::{
+    prelude::*,
+    types::{InlineKeyboardButton, InlineKeyboardMarkup, Update},
+    utils::command::BotCommands,
+};
+
+type HandlerResult = Result<(), Box<dyn Error + Send + Sync>>;
 
 #[tokio::main]
 async fn main() {
@@ -13,6 +21,7 @@ async fn main() {
 
     let handler = dptree::entry()
         // .branch(Update::filter_my_chat_member().endpoint(a))
+        .branch(Update::filter_callback_query().endpoint(callback_handler))
         .branch(Update::filter_message().filter_command::<Cmd>().endpoint(b))
         .branch(Update::filter_message().endpoint(c));
 
@@ -33,12 +42,29 @@ async fn a() -> Result<(), ()> {
     println!("a");
     Ok(())
 }
-async fn b() -> Result<(), ()> {
+async fn b(bot: Bot, msg: Message) -> HandlerResult {
     println!("b");
+
+    // Create a simple inline keyboard with a single button
+    let inline_keyboard =
+        InlineKeyboardMarkup::default().append_row(vec![InlineKeyboardButton::callback(
+            "Roll Dice",
+            "/roll_dice",
+        )]);
+
+    // Send the message with the inline keyboard
+    bot.send_message(msg.chat.id, "Click the button to roll the dice.")
+        .reply_markup(inline_keyboard)
+        .await?;
+
     Ok(())
 }
-async fn c() -> Result<(), ()> {
+async fn c() -> HandlerResult {
     println!("c");
+    Ok(())
+}
+async fn callback_handler(bot: Bot, q: CallbackQuery) -> HandlerResult {
+    println!("callback_handler");
     Ok(())
 }
 
@@ -73,30 +99,30 @@ async fn c() -> Result<(), ()> {
 //     .dispatch()
 //     .await;
 
-//     let handler2 = {
-//         |bot: Bot, msg: Message| async move {
-//             if let Some(command) = msg.text() {
-//                 match command {
-//                     "/dice" => bot.send_dice(msg.chat.id).await?,
+// let handler2 = {
+//     |bot: Bot, msg: Message| async move {
+//         if let Some(command) = msg.text() {
+//             match command {
+//                 "/dice" => bot.send_dice(msg.chat.id).await?,
 
-//                     "/dice_btn" => {
-//                         // Create a simple inline keyboard with a single button
-//                         let inline_keyboard = InlineKeyboardMarkup::default().append_row(vec![
-//                             InlineKeyboardButton::callback("Roll Dice", "/roll_dice"),
-//                         ]);
+//                 "/dice_btn" => {
+//                     // Create a simple inline keyboard with a single button
+//                     let inline_keyboard = InlineKeyboardMarkup::default().append_row(vec![
+//                         InlineKeyboardButton::callback("Roll Dice", "/roll_dice"),
+//                     ]);
 
-//                         // Send the message with the inline keyboard
-//                         bot.send_message(msg.chat.id, "Click the button to roll the dice.")
-//                             .reply_markup(inline_keyboard)
-//                             .await?
-//                     }
+//                     // Send the message with the inline keyboard
+//                     bot.send_message(msg.chat.id, "Click the button to roll the dice.")
+//                         .reply_markup(inline_keyboard)
+//                         .await?
+//                 }
 
-//                     _ => bot.send_message(msg.chat.id, "/dice /dice_btn").await?,
-//                 };
+//                 _ => bot.send_message(msg.chat.id, "/dice /dice_btn").await?,
 //             };
-//             Ok(())
-//         }
-//     };
+//         };
+//         Ok(())
+//     }
+// };
 
-//     teloxide::repl(bot, handler2).await;
+// teloxide::repl(bot, handler2).await;
 // }
