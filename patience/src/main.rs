@@ -8,7 +8,7 @@ use crate::patience::{Deck, MySpread};
 fn main() {
     let start = Instant::now();
     let suits = vec!["☐", "L", "▲", "♡", "○"];
-    let nominals = vec![
+    let ranks = vec![
         "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
     ];
     let deck = Deck::new(suits, nominals);

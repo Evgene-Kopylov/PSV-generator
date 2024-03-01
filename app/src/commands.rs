@@ -1,5 +1,7 @@
 use crate::error_handler::{HandlerMessage, HandlerResult};
+use teloxide::payloads::SendMessageSetters as _;
 use teloxide::prelude::Requester;
+use teloxide::types::{InlineKeyboardButton, InlineKeyboardMarkup};
 use teloxide::{types::Message, utils::command::BotCommands, Bot};
 
 #[derive(BotCommands, Debug, Clone)]
@@ -29,22 +31,57 @@ pub async fn commands_handler(bot: Bot, msg: Message, cmd: Command) -> HandlerRe
         Command::Start => start(bot, msg).await?,
     };
 
-    // // Create a simple inline keyboard with a single button
-    // let inline_keyboard =
-    //     InlineKeyboardMarkup::default().append_row(vec![InlineKeyboardButton::callback(
-    //         "Roll Dice",
-    //         "/roll_dice",
-    //     )]);
-
-    // // Send the message with the inline keyboard
-    // bot.send_message(msg.chat.id, "Click the button to roll the dice.")
-    //     .reply_markup(inline_keyboard)
-    //     .await?;
-
     Ok(())
 }
 
 async fn start(bot: Bot, msg: Message) -> HandlerMessage {
-    println!("start");
-    Ok(bot.send_message(msg.chat.id, "Start").await?)
+    // // Create a simple inline keyboard with a single button
+    // let mut inline_keyboard = InlineKeyboardMarkup::default();
+
+    // for i in 0..15 {
+    //     inline_keyboard
+    //         .clone()
+    //         .append_row(vec![InlineKeyboardButton::callback(
+    //             "Roll Dice",
+    //             "/roll_dice",
+    //         )]);
+    // }
+
+    // // Send the message with the inline keyboard
+    // Ok(bot
+    //     .send_message(msg.chat.id, "Click the button to roll the dice.")
+    //     .reply_markup(inline_keyboard)
+    //     .await?)
+
+    let suits = vec!["☐", "L", "▲", "♡", "○"];
+    let ranks = vec![
+        "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
+    ];
+
+    let keyboard = make_keyboard(suits, ranks);
+    Ok(bot
+        .send_message(msg.chat.id, "Debian versions:")
+        .reply_markup(keyboard)
+        .await?)
+
+    // Ok(bot.send_message(msg.chat.id, "Start").await?)
+}
+
+/// Creates a keyboard made by buttons in a big column.
+fn make_keyboard(suits: Vec<&str>, ranks: Vec<&str>) -> InlineKeyboardMarkup {
+    let mut keyboard: Vec<Vec<InlineKeyboardButton>> = vec![];
+
+    let chank_size = 5;
+    // let mut suits
+
+    for rank in ranks.chunks(chank_size) {
+        let row = rank
+            .iter()
+            .map(|&item| InlineKeyboardButton::callback(item.to_owned(), item.to_owned()))
+            .collect();
+
+        keyboard.push(row);
+    }
+
+    InlineKeyboardMarkup::new(keyboard)
 }
