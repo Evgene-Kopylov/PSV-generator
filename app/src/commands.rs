@@ -35,24 +35,6 @@ pub async fn commands_handler(bot: Bot, msg: Message, cmd: Command) -> HandlerRe
 }
 
 async fn start(bot: Bot, msg: Message) -> HandlerMessage {
-    // // Create a simple inline keyboard with a single button
-    // let mut inline_keyboard = InlineKeyboardMarkup::default();
-
-    // for i in 0..15 {
-    //     inline_keyboard
-    //         .clone()
-    //         .append_row(vec![InlineKeyboardButton::callback(
-    //             "Roll Dice",
-    //             "/roll_dice",
-    //         )]);
-    // }
-
-    // // Send the message with the inline keyboard
-    // Ok(bot
-    //     .send_message(msg.chat.id, "Click the button to roll the dice.")
-    //     .reply_markup(inline_keyboard)
-    //     .await?)
-
     let suits = vec!["☐", "L", "▲", "♡", "○"];
     let ranks = vec![
         "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
@@ -69,11 +51,11 @@ fn make_keyboard(suits: Vec<&str>, ranks: Vec<&str>) -> InlineKeyboardMarkup {
     let mut keyboard: Vec<Vec<InlineKeyboardButton>> = vec![];
 
     // дополнить список рангов до кратной числу кнопок в ряду длянны.
-    let chank_size = 5;
+    let btn_row_size = 5;
     let mut ranks = ranks.clone();
-    let reminder = chank_size - ranks.len() % chank_size;
+    let reminder = btn_row_size - ranks.len() % btn_row_size;
     dbg!(reminder);
-    if ranks.len() % chank_size > 0 && reminder > 0 {
+    if ranks.len() % btn_row_size > 0 && reminder > 0 {
         ranks.extend(std::iter::repeat(" ").take(reminder));
     }
 
@@ -82,7 +64,7 @@ fn make_keyboard(suits: Vec<&str>, ranks: Vec<&str>) -> InlineKeyboardMarkup {
     keyboard.push(row);
 
     // грид кнопок рангов
-    for rank in ranks.chunks(chank_size) {
+    for rank in ranks.chunks(btn_row_size) {
         let row = rank
             .iter()
             .map(|&item| InlineKeyboardButton::callback(item, "rank_".to_owned() + item))
@@ -95,18 +77,17 @@ fn make_keyboard(suits: Vec<&str>, ranks: Vec<&str>) -> InlineKeyboardMarkup {
 
     // Дополнить список мастей до кратной числу кнопок в ряду длинны.
     let mut suits = suits.clone();
-    if suits.len() < chank_size {
-        suits.extend(std::iter::repeat(" ").take(chank_size - suits.len()));
+    if suits.len() < btn_row_size {
+        suits.extend(std::iter::repeat(" ").take(btn_row_size - suits.len()));
     }
 
-    // for suit in suits {
+    // линия мастей.
     let row = suits
         .iter()
         .map(|&item| InlineKeyboardButton::callback(item, "suit_".to_owned() + item))
         .collect();
 
     keyboard.push(row);
-    // }
 
     InlineKeyboardMarkup::new(keyboard)
 }
