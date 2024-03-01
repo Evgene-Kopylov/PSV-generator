@@ -1,4 +1,4 @@
-use crate::error_handler::HandlerResult;
+use crate::error_handler::{HandlerMessage, HandlerResult};
 use teloxide::prelude::Requester;
 use teloxide::{types::Message, utils::command::BotCommands, Bot};
 
@@ -26,7 +26,7 @@ pub async fn commands_handler(bot: Bot, msg: Message, cmd: Command) -> HandlerRe
         }
 
         Command::Dice => bot.send_dice(msg.chat.id).await?,
-        Command::Start => todo!(),
+        Command::Start => start(bot, msg).await?,
     };
 
     // // Create a simple inline keyboard with a single button
@@ -42,4 +42,9 @@ pub async fn commands_handler(bot: Bot, msg: Message, cmd: Command) -> HandlerRe
     //     .await?;
 
     Ok(())
+}
+
+async fn start(bot: Bot, msg: Message) -> HandlerMessage {
+    println!("start");
+    Ok(bot.send_message(msg.chat.id, "Start").await?)
 }

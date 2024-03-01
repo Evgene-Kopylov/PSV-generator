@@ -14,8 +14,6 @@ use teloxide::{
     utils::command::BotCommands,
 };
 
-// type HandlerResult = Result<(), Box<dyn Error + Send + Sync>>;
-
 #[tokio::main]
 async fn main() {
     log::info!("Начало работы...");
