@@ -6,7 +6,7 @@ use patience_lib::patience::MySpread;
 use teloxide::{
     dispatching::dialogue::InMemStorage,
     prelude::*,
-    types::{Message, ParseMode},
+    types::{InlineKeyboardButton, InlineKeyboardMarkup, Message, ParseMode},
     utils::command::BotCommands,
 };
 
@@ -20,9 +20,22 @@ async fn main() {
         if let Some(command) = msg.text() {
             match command {
                 "/dice" => bot.send_dice(msg.chat.id).await?,
-                _ => bot.send_message(msg.chat.id, "not /dice").await?,
+
+                "/dice_btn" => {
+                    // Create a simple inline keyboard with a single button
+                    let inline_keyboard = InlineKeyboardMarkup::default().append_row(vec![
+                        InlineKeyboardButton::callback("Roll Dice", "/roll_dice"),
+                    ]);
+
+                    // Send the message with the inline keyboard
+                    bot.send_message(msg.chat.id, "Click the button to roll the dice.")
+                        .reply_markup(inline_keyboard)
+                        .await?
+                }
+
+                _ => bot.send_message(msg.chat.id, "/dice /dice_btn").await?,
             };
-        }
+        };
         Ok(())
     })
     .await;
