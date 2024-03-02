@@ -40,9 +40,11 @@ async fn start(bot: Bot, msg: Message) -> HandlerMessageResult {
         "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
     ];
 
+    let text = "Пасьянс Симпатии и Валентности.";
+
     let keyboard = make_keyboard(suits, ranks);
     Ok(bot
-        .send_message(msg.chat.id, "Пасьянс Симпатии и Валентности.")
+        .send_message(msg.chat.id, text)
         .reply_markup(keyboard)
         .await?)
 }
@@ -86,7 +88,14 @@ fn make_keyboard(suits: Vec<&str>, ranks: Vec<&str>) -> InlineKeyboardMarkup {
         .iter()
         .map(|&item| InlineKeyboardButton::callback(item, "suit_".to_owned() + item))
         .collect();
+    keyboard.push(row);
 
+    // Задать целевую последовательность и сложить пасьянс.
+    let row = vec![
+        InlineKeyboardButton::callback("...", "set_target_chain"),
+        InlineKeyboardButton::callback("< __ >", "space_card"),
+        InlineKeyboardButton::callback(">>>", "patience"),
+    ];
     keyboard.push(row);
 
     InlineKeyboardMarkup::new(keyboard)
