@@ -11,7 +11,7 @@ fn main() {
     let ranks = vec![
         "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
     ];
-    let deck = Deck::new(suits, nominals);
+    let deck = Deck::new(suits, ranks);
     let target = vec!["4", "2○", "β☐", "2☐", "3○", "9"];
     let mut my_spread = MySpread::new(deck);
     my_spread.patience(target);
