@@ -1,8 +1,12 @@
 use teloxide::prelude::{Bot, CallbackQuery};
 
-use crate::{errors::HandlerResult, MyDialogue};
+use crate::{MyDialogue, TexoxideError};
 
-pub async fn callback_handler(bot: Bot, dialogue: MyDialogue, q: CallbackQuery) -> HandlerResult {
+pub async fn callback_handler(
+    bot: Bot,
+    dialogue: MyDialogue,
+    q: CallbackQuery,
+) -> Result<(), TexoxideError> {
     let callback_data = q.clone().data.unwrap_or_default();
 
     if let Some((category, value)) = split_callback_data(&callback_data) {
@@ -34,7 +38,7 @@ async fn handle_rank_callback(
     dialogue: MyDialogue,
     q: CallbackQuery,
     rank_value: &str,
-) -> HandlerResult {
+) -> Result<(), TexoxideError> {
     // Handle rank callback, perform actions based on the rank value
     // ...
     println!("rank_  value = {}", rank_value);
@@ -46,7 +50,7 @@ async fn handle_suit_callback(
     dialogue: MyDialogue,
     q: CallbackQuery,
     suit_value: &str,
-) -> HandlerResult {
+) -> Result<(), TexoxideError> {
     // Handle suit callback, perform actions based on the suit value
     // ...
     println!("suit_  value = {}", suit_value);

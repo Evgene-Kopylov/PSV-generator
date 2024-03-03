@@ -1,5 +1,4 @@
-use crate::errors::{HandlerMessageResult, HandlerResult, ResultError};
-use crate::MyDialogue;
+use crate::{MyDialogue, TexoxideError};
 use teloxide::payloads::SendMessageSetters as _;
 use teloxide::prelude::Requester;
 use teloxide::types::{InlineKeyboardButton, InlineKeyboardMarkup};
@@ -24,7 +23,7 @@ pub async fn commands_handler(
     dialogue: MyDialogue,
     msg: Message,
     cmd: Command,
-) -> HandlerResult {
+) -> Result<(), TexoxideError> {
     log::info!("{:?}", &cmd);
 
     match cmd {
@@ -44,7 +43,7 @@ pub async fn solitare_menu(
     bot: Bot,
     dialogue: MyDialogue,
     msg: Message,
-) -> Result<(), ResultError> {
+) -> Result<(), TexoxideError> {
     let suits = vec!["☐", "L", "▲", "♡", "○"];
     let ranks = vec![
         "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
