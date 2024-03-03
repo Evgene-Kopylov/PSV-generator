@@ -1,11 +1,14 @@
 use teloxide::{
     dispatching::{dialogue::InMemStorage, UpdateFilterExt},
     prelude::*,
-    types::{InlineKeyboardButton, InlineKeyboardMarkup, Update},
+    types::Update,
 };
 
 mod start;
 use start::start;
+
+mod menu_buttons;
+use menu_buttons::menu_buttons;
 
 use dotenv_codegen::dotenv;
 use std::error::Error;
@@ -28,8 +31,11 @@ async fn main() {
 
     let handler = dptree::entry()
         .enter_dialogue::<Update, InMemStorage<State>, State>()
-        .branch(Update::filter_message().branch(dptree::case![State::Start].endpoint(start)));
-    // .branch(Update::filter_callback_query().branch(dptree::case![State::Menu].endpoint(menu_buttons_handler)));
+        .branch(Update::filter_message().branch(dptree::case![State::Start].endpoint(start)))
+        .branch(
+            Update::filter_callback_query()
+                .branch(dptree::case![State::Menu].endpoint(menu_buttons)),
+        );
 
     Dispatcher::builder(bot, handler)
         .dependencies(dptree::deps![InMemStorage::<State>::new()])
