@@ -1,4 +1,5 @@
-use crate::errors::{HandlerMessageResult, HandlerResult};
+use crate::errors::{HandlerMessageResult, HandlerResult, ResultError};
+use crate::MyDialogue;
 use teloxide::payloads::SendMessageSetters as _;
 use teloxide::prelude::Requester;
 use teloxide::types::{InlineKeyboardButton, InlineKeyboardMarkup};
@@ -14,11 +15,16 @@ pub enum Command {
     Help,
     #[command(description = "Кубик Д6")]
     Dice,
-    #[command(description = "Запустить бот.")]
-    Start,
+    // #[command(description = "Запустить бот.")]
+    // Start,
 }
 
-pub async fn commands_handler(bot: Bot, msg: Message, cmd: Command) -> HandlerResult {
+pub async fn commands_handler(
+    bot: Bot,
+    dialogue: MyDialogue,
+    msg: Message,
+    cmd: Command,
+) -> HandlerResult {
     log::info!("{:?}", &cmd);
 
     match cmd {
@@ -28,13 +34,17 @@ pub async fn commands_handler(bot: Bot, msg: Message, cmd: Command) -> HandlerRe
         }
 
         Command::Dice => bot.send_dice(msg.chat.id).await?,
-        Command::Start => start(bot, msg).await?,
+        // Command::Start => solitare_menu(bot, dialogue, msg).await?,
     };
 
     Ok(())
 }
 
-async fn start(bot: Bot, msg: Message) -> HandlerMessageResult {
+pub async fn solitare_menu(
+    bot: Bot,
+    dialogue: MyDialogue,
+    msg: Message,
+) -> Result<(), ResultError> {
     let suits = vec!["☐", "L", "▲", "♡", "○"];
     let ranks = vec![
         "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
@@ -43,10 +53,11 @@ async fn start(bot: Bot, msg: Message) -> HandlerMessageResult {
     let text = "Пасьянс Симпатии и Валентности.";
 
     let keyboard = make_keyboard(suits, ranks);
-    Ok(bot
+    let _message = bot
         .send_message(msg.chat.id, text)
         .reply_markup(keyboard)
-        .await?)
+        .await?;
+    Ok(())
 }
 
 fn make_keyboard(suits: Vec<&str>, ranks: Vec<&str>) -> InlineKeyboardMarkup {
