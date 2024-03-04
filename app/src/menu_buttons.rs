@@ -65,9 +65,20 @@ async fn handle_suit_callback(
 
     if let Some(index) = suits.iter().position(|x| x == &suit_value) {
         println!("Index of {} is: {}", suit_value, index);
+        let suits = modify_by_index(suits, index, "__".to_string());
     } else {
         println!("Element {} not found in the vector", suit_value);
     }
 
     Ok(())
+}
+
+fn modify_by_index(mut v: Vec<String>, index: usize, new_value: String) -> Vec<String> {
+    if let Some(element) = v.iter_mut().nth(index) {
+        *element = new_value;
+        println!("Modified vector: {:?}", v);
+    } else {
+        println!("Index {} is out of bounds", index);
+    }
+    v
 }
