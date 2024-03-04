@@ -20,6 +20,7 @@ pub struct Deck {
 }
 
 
+#[allow(dead_code)]
 pub fn default() -> (Vec<String>, Vec<String>) {
     let suits = vec!["☐", "L", "▲", "♡", "○"].iter().map(|c| c.to_string()).collect();
     let ranks = vec![
