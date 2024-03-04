@@ -1,16 +1,20 @@
+#![allow(unused)]
+
 use std::time::Instant;
 
 mod patience;
 mod settings;
 mod test_patience;
-use crate::patience::{Deck, MySpread};
+use crate::patience::{give_default, Deck, MySpread};
 
 fn main() {
     let start = Instant::now();
-    let suits = vec!["☐", "L", "▲", "♡", "○"];  // TODO use default()
-    let ranks = vec![
-        "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
-    ];
+    // let suits = vec!["☐", "L", "▲", "♡", "○"];  // TODO use default()
+    // let ranks = vec![
+    // "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
+    // ];
+
+    let (suits, ranks) = give_default();
     let deck = Deck::new(suits, ranks);
     let target = vec!["4", "2○", "β☐", "2☐", "3○", "9"];
     let mut my_spread = MySpread::new(deck);

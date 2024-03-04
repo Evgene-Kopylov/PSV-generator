@@ -19,13 +19,18 @@ pub struct Deck {
     pub current_deck: Vec<Card>,
 }
 
-
-#[allow(dead_code)]
-pub fn default() -> (Vec<String>, Vec<String>) {
-    let suits = vec!["☐", "L", "▲", "♡", "○"].iter().map(|c| c.to_string()).collect();
-    let ranks = vec![
+// #[allow(dead_code)]
+pub fn give_default() -> (Vec<String>, Vec<String>) {
+    let suits: Vec<String> = vec!["☐", "L", "▲", "♡", "○"]
+        .iter()
+        .map(|c| c.to_string())
+        .collect();
+    let ranks: Vec<String> = vec![
         "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
-    ].iter().map(|c| c.to_string()).collect();
+    ]
+    .iter()
+    .map(|c| c.to_string())
+    .collect();
     (suits, ranks)
 }
 
@@ -48,9 +53,9 @@ impl Card {
 }
 
 impl Deck {
-    pub fn new(suits: Vec<&str>, nominals: Vec<&str>) -> Self {
-        let suits: Vec<String> = suits.iter().map(|s| s.to_string()).collect();
-        let nominals: Vec<String> = nominals.iter().map(|n| n.to_string()).collect();
+    pub fn new(suits: Vec<String>, nominals: Vec<String>) -> Self {
+        // let suits: Vec<String> = suits.iter().map(|s| s.to_string()).collect();
+        // let nominals: Vec<String> = nominals.iter().map(|n| n.to_string()).collect();
         let mut full_deck: Vec<Card> = vec![];
 
         for s in &suits {
