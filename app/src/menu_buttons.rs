@@ -59,18 +59,31 @@ async fn handle_suit_callback(
     suit_value: String,
     suits: Vec<String>,
 ) -> Result<(), TexoxideError> {
-    // Handle suit callback, perform actions based on the suit value
-    // ...
     println!("suit_  value = {}", suit_value);
 
-    if let Some(index) = suits.iter().position(|x| x == &suit_value) {
-        println!("Index of {} is: {}", suit_value, index);
+    // if let Some(index) = suits.iter().position(|x| x == &suit_value) {
+    //     println!("Index of {} is: {}", suit_value, index);
+    //     let suits = modify_by_index(suits, index, "__".to_string());
+    // } else {
+    //     println!("Element {} not found in the vector", suit_value);
+    // }
+
+    if let Some(index) = get_index_by_value(suits.clone(), suit_value) {
         let suits = modify_by_index(suits, index, "__".to_string());
-    } else {
-        println!("Element {} not found in the vector", suit_value);
     }
 
     Ok(())
+}
+
+fn get_index_by_value(v: Vec<String>, value: String) -> Option<usize> {
+    if let Some(index) = v.iter().position(|x| x == &value) {
+        println!("Index of {} is: {}", value, index);
+        let suits = modify_by_index(v, index, "__".to_string());
+        Some(index)
+    } else {
+        println!("Element {} not found in the vector", value);
+        None
+    }
 }
 
 fn modify_by_index(mut v: Vec<String>, index: usize, new_value: String) -> Vec<String> {
