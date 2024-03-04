@@ -44,7 +44,6 @@ fn make_keyboard(suits: Vec<&str>, ranks: Vec<&str>) -> InlineKeyboardMarkup {
     let btn_row_size = 5;
     let mut ranks = ranks.clone();
     let reminder = btn_row_size - ranks.len() % btn_row_size;
-    dbg!(reminder);
     if ranks.len() % btn_row_size > 0 && reminder > 0 {
         ranks.extend(std::iter::repeat(" ").take(reminder));
     }

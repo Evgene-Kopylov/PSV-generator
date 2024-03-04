@@ -61,15 +61,9 @@ async fn handle_suit_callback(
 ) -> Result<(), TexoxideError> {
     println!("suit_  value = {}", suit_value);
 
-    // if let Some(index) = suits.iter().position(|x| x == &suit_value) {
-    //     println!("Index of {} is: {}", suit_value, index);
-    //     let suits = modify_by_index(suits, index, "__".to_string());
-    // } else {
-    //     println!("Element {} not found in the vector", suit_value);
-    // }
-
     if let Some(index) = get_index_by_value(suits.clone(), suit_value) {
         let suits = modify_by_index(suits, index, "__".to_string());
+        dialogue.update(State::Menu { suits }).await?;
     }
 
     Ok(())
@@ -77,11 +71,11 @@ async fn handle_suit_callback(
 
 fn get_index_by_value(v: Vec<String>, value: String) -> Option<usize> {
     if let Some(index) = v.iter().position(|x| x == &value) {
-        println!("Index of {} is: {}", value, index);
+        log::info!("Index of {} is: {}", value, index);
         let suits = modify_by_index(v, index, "__".to_string());
         Some(index)
     } else {
-        println!("Element {} not found in the vector", value);
+        log::info!("Element {} not found in the vector", value);
         None
     }
 }
@@ -89,9 +83,9 @@ fn get_index_by_value(v: Vec<String>, value: String) -> Option<usize> {
 fn modify_by_index(mut v: Vec<String>, index: usize, new_value: String) -> Vec<String> {
     if let Some(element) = v.iter_mut().nth(index) {
         *element = new_value;
-        println!("Modified vector: {:?}", v);
+        log::info!("Modified vector: {:?}", v);
     } else {
-        println!("Index {} is out of bounds", index);
+        log::info!("Index {} is out of bounds", index);
     }
     v
 }
