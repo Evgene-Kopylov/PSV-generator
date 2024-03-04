@@ -19,6 +19,15 @@ pub struct Deck {
     pub current_deck: Vec<Card>,
 }
 
+
+pub fn default() -> (Vec<String>, Vec<String>) {
+    let suits = vec!["☐", "L", "▲", "♡", "○"].iter().map(|c| c.to_string()).collect();
+    let ranks = vec![
+        "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
+    ].iter().map(|c| c.to_string()).collect();
+    (suits, ranks)
+}
+
 pub struct MySpread {
     deck: Deck,
 }

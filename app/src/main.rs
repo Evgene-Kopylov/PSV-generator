@@ -1,3 +1,4 @@
+use patience_lib::patience::Card;
 use teloxide::{
     dispatching::{dialogue::InMemStorage, UpdateFilterExt},
     prelude::*,
@@ -20,7 +21,9 @@ type TeloxideDialogue = Dialogue<State, InMemStorage<State>>;
 pub enum State {
     #[default]
     Start,
-    Menu,
+    Menu {
+        suits: Vec<String>,
+    },
 }
 
 #[tokio::main]
@@ -34,7 +37,7 @@ async fn main() {
         .branch(Update::filter_message().branch(dptree::case![State::Start].endpoint(start)))
         .branch(
             Update::filter_callback_query()
-                .branch(dptree::case![State::Menu].endpoint(menu_buttons)),
+                .branch(dptree::case![State::Menu { suits }].endpoint(menu_buttons)),
         );
 
     Dispatcher::builder(bot, handler)

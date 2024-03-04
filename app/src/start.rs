@@ -1,3 +1,4 @@
+use patience_lib::patience::default;
 use teloxide::{
     prelude::*,
     types::{InlineKeyboardButton, InlineKeyboardMarkup},
@@ -13,21 +14,22 @@ pub async fn start(
     msg: Message,
 ) -> Result<(), TexoxideError> {
     log::info!("Start");
-    spawn_menu(bot, msg).await?;
-    dialoque.update(State::Menu).await?;
+    let (suits, _) = default();
+    spawn_menu(bot, msg, suits.clone()).await?;
+    dialoque.update(State::Menu { suits: suits }).await?;
     log::info!("Произошел спавн меню.");
     Ok(())
 }
 
-async fn spawn_menu(bot: Bot, msg: Message) -> Result<(), TexoxideError> {
-    let suits = vec!["☐", "L", "▲", "♡", "○"];
+pub async fn spawn_menu(bot: Bot, msg: Message, suits: Vec<String>) -> Result<(), TexoxideError> {
+    // let suits = vec!["☐", "L", "▲", "♡", "○"];
     let ranks = vec![
         "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
     ];
 
     let text = "Пасьянс Симпатии и Валентности.";
 
-    let keyboard = make_keyboard(suits, ranks);
+    let keyboard = make_keyboard(suits.iter().map(|c| c.as_str()).collect(), ranks);
     let _message = bot
         .send_message(msg.chat.id, text)
         .reply_markup(keyboard)

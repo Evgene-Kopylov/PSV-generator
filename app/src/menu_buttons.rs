@@ -1,12 +1,15 @@
 #![allow(unused)] // FIXME
 
+use std::ops::Index;
+
 use teloxide::prelude::{Bot, CallbackQuery};
 
-use crate::{TeloxideDialogue, TexoxideError};
+use crate::{start::spawn_menu, State, TeloxideDialogue, TexoxideError};
 
 pub async fn menu_buttons(
     bot: Bot,
     dialogue: TeloxideDialogue,
+    suits: Vec<String>,
     q: CallbackQuery,
 ) -> Result<(), TexoxideError> {
     let callback_data = q.clone().data.unwrap_or_default();
@@ -14,7 +17,9 @@ pub async fn menu_buttons(
     if let Some((category, value)) = split_callback_data(&callback_data) {
         match category {
             "rank" => handle_rank_callback(bot, dialogue, q.clone(), value).await?,
-            "suit" => handle_suit_callback(bot, dialogue, q.clone(), value).await?,
+            "suit" => {
+                handle_suit_callback(bot, dialogue, q.clone(), value.to_string(), suits).await?
+            }
             _ => {
                 println!("Unknown category, handle accordingly or ignore");
             }
@@ -51,10 +56,18 @@ async fn handle_suit_callback(
     bot: Bot,
     dialogue: TeloxideDialogue,
     q: CallbackQuery,
-    suit_value: &str,
+    suit_value: String,
+    suits: Vec<String>,
 ) -> Result<(), TexoxideError> {
     // Handle suit callback, perform actions based on the suit value
     // ...
     println!("suit_  value = {}", suit_value);
+
+    if let Some(index) = suits.iter().position(|x| x == &suit_value) {
+        println!("Index of {} is: {}", suit_value, index);
+    } else {
+        println!("Element {} not found in the vector", suit_value);
+    }
+
     Ok(())
 }
