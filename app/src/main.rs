@@ -32,10 +32,6 @@ async fn main() {
     dotenv().ok();
     logging_config::logging_config();
 
-    log::debug!("DEBUG");
-    log::info!("INFO");
-    log::warn!("WARN");
-    log::error!("ERROR");
     log::info!("Начало работы...");
 
     let bot = Bot::from_env();
