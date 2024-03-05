@@ -2,7 +2,7 @@ use colored::*;
 use env_logger;
 use std::io::Write;
 
-const VAR_NAME: &str = "LOG_LEVEL";
+pub const VAR_NAME: &str = "LOG_LEVEL";
 
 pub fn logging_config() {
     env_logger::Builder::new()
@@ -15,14 +15,17 @@ pub fn logging_config() {
                 log::Level::Error => "ERROR".red(),
             };
 
+            let level_str = format!("{:<width$}", level_str, width = 5).dimmed();
+
             writeln!(
                 buf,
-                "{}: {}    {}:{}    {}",
+                "{}: {}    {}    {}",
                 level_str,
-                record.args(),
-                record.file().unwrap_or("unknown"),
-                record.line().unwrap_or(0),
-                chrono::Local::now().format("%Y-%m-%dT%H:%M:%S"),
+                format!("{:<30}", record.args().to_string()),
+                format!("{}:{}",
+                    record.file().unwrap_or("unknown"),
+                    record.line().unwrap_or(0)).blue(),
+                chrono::Local::now().format("%Y-%m-%dT%H:%M:%S").to_string().dimmed(),
             )
         })
         .parse_env(VAR_NAME)
