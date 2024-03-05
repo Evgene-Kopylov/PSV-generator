@@ -2,6 +2,7 @@
 
 use std::ops::Index;
 
+use log::trace;
 use teloxide::prelude::{Bot, CallbackQuery};
 
 use crate::{start::spawn_menu, State, TeloxideDialogue, TexoxideError};
@@ -22,7 +23,7 @@ pub async fn menu_buttons(
                 handle_suit_callback(bot, dialogue, q.clone(), value.to_string(), suits).await?
             }
             _ => {
-                println!("Unknown category, handle accordingly or ignore");
+                log::debug!("Unknown category, handle accordingly or ignore");
             }
         }
     } else {
@@ -49,7 +50,7 @@ async fn handle_rank_callback(
 ) -> Result<(), TexoxideError> {
     // Handle rank callback, perform actions based on the rank value
     // ...
-    println!("rank_  value = {}", rank_value);
+    log::trace!("rank_  value = {}", rank_value);
     Ok(())
 }
 
@@ -60,7 +61,7 @@ async fn handle_suit_callback(
     suit_value: String,
     suits: Vec<String>,
 ) -> Result<(), TexoxideError> {
-    println!("suit_  value = {}", suit_value);
+    log::trace!("suit_  value = {}", suit_value);
 
     if let Some(index) = get_index_by_value(suits.clone(), suit_value) {
         let suits = modify_by_index(suits, index, "__".to_string());
@@ -83,8 +84,7 @@ fn get_index_by_value(v: Vec<String>, value: String) -> Option<usize> {
 fn modify_by_index(mut v: Vec<String>, index: usize, new_value: String) -> Vec<String> {
     if let Some(element) = v.iter_mut().nth(index) {
         *element = new_value;
-        dbg!(&v);
-        log::trace!("Modified vector: {:?}", v);
+        log::trace!("Modified vector: {:#?}", v);
     } else {
         log::trace!("Index {} is out of bounds", index);
     }
