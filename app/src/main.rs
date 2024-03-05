@@ -39,14 +39,30 @@ async fn main() {
     let handler = dptree::entry()
         .enter_dialogue::<Update, InMemStorage<State>, State>()
         .branch(Update::filter_message().branch(dptree::case![State::Start].endpoint(start)))
+        .branch(Update::filter_callback_query().branch(dptree::case![State::Start].endpoint(unexpected_callback)))
         .branch(
             Update::filter_callback_query()
                 .branch(dptree::case![State::Menu { suits }].endpoint(menu_buttons)),
-        );
+        )
+        .branch(Update::filter_message().endpoint(unexpected_text));
 
     Dispatcher::builder(bot, handler)
         .dependencies(dptree::deps![InMemStorage::<State>::new()])
         .build()
         .dispatch()
         .await;
+}
+
+
+async fn unexpected_text(bot: Bot, msg: Message) -> Result<(), TexoxideError> {
+    let text = "¯\\_(ツ)_/¯";
+    bot.send_message(msg.chat.id, text).await?;
+    Ok(()) 
+}
+
+
+async fn unexpected_callback(bot: Bot, _q: CallbackQuery, dialogue: TeloxideDialogue,) -> Result<(), TexoxideError> {
+    let text = "(×﹏×) /start ?";  
+    bot.send_message(dialogue.chat_id(), text).await?;
+    Ok(()) 
 }

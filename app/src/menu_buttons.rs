@@ -27,7 +27,7 @@ pub async fn menu_buttons(
             }
         }
     } else {
-        dbg!(&callback_data);
+        log::debug!("{:#?}", &callback_data);
     }
 
     Ok(())
