@@ -12,6 +12,7 @@ pub async fn menu_buttons(
     suits: Vec<String>,
     q: CallbackQuery,
 ) -> Result<(), TexoxideError> {
+    log::info!("menu_buttons");
     let callback_data = q.clone().data.unwrap_or_default();
 
     if let Some((category, value)) = split_callback_data(&callback_data) {
