@@ -50,7 +50,7 @@ async fn handle_rank_callback(
 ) -> Result<(), TexoxideError> {
     // Handle rank callback, perform actions based on the rank value
     // ...
-    log::trace!("rank_  value = {}", rank_value);
+    log::trace!("rank_value = {}", rank_value);
     Ok(())
 }
 
@@ -61,7 +61,7 @@ async fn handle_suit_callback(
     suit_value: String,
     suits: Vec<String>,
 ) -> Result<(), TexoxideError> {
-    log::trace!("suit_  value = {}", suit_value);
+    log::trace!("suit_value = {}", suit_value);
 
     if let Some(index) = get_index_by_value(suits.clone(), suit_value) {
         let suits = modify_by_index(suits, index, "__".to_string());
