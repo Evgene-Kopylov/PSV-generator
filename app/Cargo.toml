@@ -16,6 +16,6 @@ tokio = { version =  "1.8", features = ["rt-multi-thread", "macros"] }
 # local imports
 patience = { path = "../patience" }
 env_logger = "0.11.2"
-chrono = "0.4.34"
+# chrono = "0.4.34"
 dotenv = "0.15.0"
-
+logging = { path = "../logging" }

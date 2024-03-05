@@ -13,9 +13,7 @@ use menu_buttons::menu_buttons;
 use dotenv::dotenv;
 use std::error::Error;
 
-use env_logger;
-
-use std::io::Write;
+use logging::logging_config;
 
 type TexoxideError = Box<dyn Error + Send + Sync>;
 type TeloxideDialogue = Dialogue<State, InMemStorage<State>>;
@@ -29,26 +27,10 @@ pub enum State {
     },
 }
 
-
-
 #[tokio::main]
 async fn main() {
     dotenv().ok();
-
-    env_logger::Builder::new()
-    .format(|buf, record| {
-        writeln!(
-            buf,
-            "{}: {}    {}:{}    {}",
-            record.level(),
-            record.args(),
-            record.file().unwrap_or("unknown"),
-            record.line().unwrap_or(0),
-            chrono::Local::now().format("%Y-%m-%dT%H:%M:%S"),
-        )
-    })
-    .parse_env("RUST_LOG") 
-    .init();
+    logging_config::logging_config();
 
     log::debug!("DEBUG");
     log::info!("INFO");
