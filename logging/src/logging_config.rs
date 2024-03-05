@@ -2,9 +2,8 @@ use colored::*;
 use env_logger;
 use std::io::Write;
 
-pub const VAR_NAME: &str = "LOG_LEVEL";
 
-pub fn logging_config() {
+pub fn logging_config(var_name: &str) {
     env_logger::Builder::new()
         .format(|buf, record| {
             let level_str = match record.level() {
@@ -28,13 +27,14 @@ pub fn logging_config() {
                 chrono::Local::now().format("%Y-%m-%dT%H:%M:%S").to_string().dimmed(),
             )
         })
-        .parse_env(VAR_NAME)
+        .parse_env(var_name)
         .init();
 
-    println!(
+
+    log::info!(
         "{}={}", 
-        VAR_NAME.blue(),
-        std::env::var(VAR_NAME).unwrap_or("<Перемпенная не определена.>".to_string()).green(),
+        var_name.blue(),
+        std::env::var(var_name).unwrap_or("<Перемпенная не определена.>".to_string()).green(),
     );
 }
 
@@ -48,7 +48,7 @@ fn format_pprinted_string(original_string: String, desired_length: usize) -> Str
         result_string
     } else {
         // В случае, если символ новой строки отсутствует, просто удлините всю строку
-        let padded_string = format!("{:<width$}", original_string, width = desired_length);
+                let padded_string = format!("{:<width$}", original_string, width = desired_length);
         padded_string
     }
 }

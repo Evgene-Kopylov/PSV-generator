@@ -30,7 +30,7 @@ pub enum State {
 #[tokio::main]
 async fn main() {
     dotenv().ok();
-    logging_config::logging_config();
+    logging_config::logging_config("LOG_LEVEL");
 
     log::info!("Начало работы...");
 

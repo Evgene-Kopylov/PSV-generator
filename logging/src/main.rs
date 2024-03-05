@@ -1,11 +1,11 @@
 use logging::logging_config::logging_config;
-use logging::logging_config::VAR_NAME;
 
+pub const VAR_NAME: &str = "LOG_LEVEL";
 
 fn main() {
     std::env::set_var(VAR_NAME, "trace");
 
-    logging_config();
+    logging_config(VAR_NAME);
 
     log::debug!("LOG");
     log::info!("INFO");
