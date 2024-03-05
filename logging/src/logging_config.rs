@@ -19,7 +19,7 @@ pub fn logging_config() {
 
             writeln!(
                 buf,
-                "{}  {}    {}    {}\n",
+                "{}  {}    {}    {}",
                 level_str,
                 format_pprinted_string(record.args().to_string(), 30),
                 format!("{}:{}",
@@ -43,12 +43,12 @@ fn format_pprinted_string(original_string: String, desired_length: usize) -> Str
     let parts: Vec<&str> = original_string.split('\n').collect();
 
     if parts.len() >= 2 {
-        let padded_second_part = format!("{:<width$}", parts[parts.len()-1], width = desired_length);
-        let result_string = format!("{}{}", parts[..parts.len()-1].join("\n"), padded_second_part);
+        let padded_second_part = format!("{:<width$}", parts[parts.len()-1], width = desired_length + 7);
+        let result_string = format!("{}\n{}", parts[..parts.len()-1].join("\n"), padded_second_part);
         result_string
     } else {
         // В случае, если символ новой строки отсутствует, просто удлините всю строку
-        let padded_string = format!("{:<width$}", original_string, width = desired_length + 1);
+        let padded_string = format!("{:<width$}", original_string, width = desired_length);
         padded_string
     }
 }
