@@ -3,9 +3,9 @@
 use std::ops::Index;
 
 use log::trace;
-use teloxide::prelude::{Bot, CallbackQuery};
+use teloxide::{dispatching::dialogue::GetChatId, payloads::EditMessageReplyMarkupSetters, prelude::{Bot, CallbackQuery}, requests::Requester};
 
-use crate::{start::spawn_menu, State, TeloxideDialogue, TexoxideError};
+use crate::{start::{make_keyboard, spawn_menu}, State, TeloxideDialogue, TexoxideError};
 
 pub async fn menu_buttons(
     bot: Bot,
@@ -65,6 +65,18 @@ async fn handle_suit_callback(
 
     if let Some(index) = get_index_by_value(suits.clone(), suit_value) {
         let suits = modify_by_index(suits, index, "__".to_string());
+        let ranks = vec![  // fixme
+            "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
+        ];
+
+        let keyboard = make_keyboard(suits.iter().map(|c| c.as_str()).collect(), ranks);
+
+        bot.edit_message_reply_markup(dialogue.chat_id(), q.message.unwrap_or({
+            log::error!("Ошибка при обновлении кнопок.");
+            dialogue.update(State::Start);
+            return Ok(())}
+        ).id)
+        .reply_markup(keyboard).await?;
         dialogue.update(State::Menu { suits }).await?;
     }
 

@@ -37,7 +37,7 @@ pub async fn spawn_menu(bot: Bot, msg: Message, suits: Vec<String>) -> Result<()
     Ok(())
 }
 
-fn make_keyboard(suits: Vec<&str>, ranks: Vec<&str>) -> InlineKeyboardMarkup {
+pub fn make_keyboard(suits: Vec<&str>, ranks: Vec<&str>) -> InlineKeyboardMarkup {
     let mut keyboard: Vec<Vec<InlineKeyboardButton>> = vec![];
 
     // дополнить список рангов до кратной числу кнопок в ряду длянны.
