@@ -3,7 +3,7 @@ use logging::logging_config::VAR_NAME;
 
 
 fn main() {
-    std::env::set_var(VAR_NAME, "debug");
+    std::env::set_var(VAR_NAME, "trace");
 
     logging_config();
 
@@ -11,5 +11,5 @@ fn main() {
     log::info!("INFO");
     log::warn!("WARN");
     log::error!("ERROR");
-    log::info!("long INFO ===================== ==================== =========================----------------------====================");
+    log::trace!("long INFO ===================== ==================== =========================----------------------====================");
 }

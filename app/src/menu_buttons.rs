@@ -12,7 +12,7 @@ pub async fn menu_buttons(
     suits: Vec<String>,
     q: CallbackQuery,
 ) -> Result<(), TexoxideError> {
-    log::info!("menu_buttons");
+    log::trace!("menu_buttons");
     let callback_data = q.clone().data.unwrap_or_default();
 
     if let Some((category, value)) = split_callback_data(&callback_data) {
@@ -72,10 +72,10 @@ async fn handle_suit_callback(
 
 fn get_index_by_value(v: Vec<String>, value: String) -> Option<usize> {
     if let Some(index) = v.iter().position(|x| x == &value) {
-        log::info!("Index of {} is: {}", value, index);
+        log::trace!("Index of {} is: {}", value, index);
         Some(index)
     } else {
-        log::info!("Element {} not found in the vector", value);
+        log::trace!("Element {} not found in the vector", value);
         None
     }
 }
@@ -84,9 +84,9 @@ fn modify_by_index(mut v: Vec<String>, index: usize, new_value: String) -> Vec<S
     if let Some(element) = v.iter_mut().nth(index) {
         *element = new_value;
         dbg!(&v);
-        log::info!("Modified vector: {:?}", v);
+        log::trace!("Modified vector: {:?}", v);
     } else {
-        log::info!("Index {} is out of bounds", index);
+        log::trace!("Index {} is out of bounds", index);
     }
     v
 }

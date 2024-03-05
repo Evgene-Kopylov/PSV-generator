@@ -13,11 +13,11 @@ pub async fn start(
     dialoque: TeloxideDialogue,
     msg: Message,
 ) -> Result<(), TexoxideError> {
-    log::info!("Start");
+    log::trace!("Start");
     let (suits, _) = give_default();
     spawn_menu(bot, msg, suits.clone()).await?;
     dialoque.update(State::Menu { suits: suits }).await?;
-    log::info!("Произошел спавн меню.");
+    log::trace!("Произошел спавн меню.");
     Ok(())
 }
 
