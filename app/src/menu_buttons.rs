@@ -71,11 +71,8 @@ async fn handle_suit_callback(
 
         let keyboard = make_keyboard(suits.iter().map(|c| c.as_str()).collect(), ranks);
 
-        bot.edit_message_reply_markup(dialogue.chat_id(), q.message.unwrap_or({
-            log::error!("Ошибка при обновлении кнопок.");
-            dialogue.update(State::Start);
-            return Ok(())}
-        ).id)
+        bot.edit_message_reply_markup(dialogue.chat_id(), q.message.unwrap()
+        .id)
         .reply_markup(keyboard).await?;
         dialogue.update(State::Menu { suits }).await?;
     }
