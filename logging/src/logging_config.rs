@@ -21,7 +21,7 @@ pub fn logging_config() {
                 buf,
                 "{}  {}    {}    {}\n",
                 level_str,
-                format!("{:<30}", record.args().to_string()),
+                format_pprinted_string(record.args().to_string(), 30),
                 format!("{}:{}",
                     record.file().unwrap_or("unknown"),
                     record.line().unwrap_or(0)).blue(),
@@ -36,4 +36,19 @@ pub fn logging_config() {
         VAR_NAME.blue(),
         std::env::var(VAR_NAME).unwrap_or("<Перемпенная не определена.>".to_string()).green(),
     );
+}
+
+
+fn format_pprinted_string(original_string: String, desired_length: usize) -> String {
+    let parts: Vec<&str> = original_string.split('\n').collect();
+
+    if parts.len() >= 2 {
+        let padded_second_part = format!("{:<width$}", parts[parts.len()-1], width = desired_length);
+        let result_string = format!("{}{}", parts[..parts.len()-1].join("\n"), padded_second_part);
+        result_string
+    } else {
+        // В случае, если символ новой строки отсутствует, просто удлините всю строку
+        let padded_string = format!("{:<width$}", original_string, width = desired_length + 1);
+        padded_string
+    }
 }
