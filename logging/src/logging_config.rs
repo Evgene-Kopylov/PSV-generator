@@ -19,7 +19,7 @@ pub fn logging_config() {
 
             writeln!(
                 buf,
-                "{}: {}    {}    {}",
+                "{}  {}    {}    {}\n",
                 level_str,
                 format!("{:<30}", record.args().to_string()),
                 format!("{}:{}",
@@ -34,6 +34,6 @@ pub fn logging_config() {
     println!(
         "{}={}", 
         VAR_NAME.blue(),
-        std::env::var(VAR_NAME).unwrap_or("Не определена!!!".red().to_string()),
+        std::env::var(VAR_NAME).unwrap_or("<Перемпенная не определена.>".to_string()).green(),
     );
 }
