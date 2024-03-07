@@ -10,7 +10,6 @@ use crate::{start::{make_keyboard, spawn_menu}, State, TeloxideDialogue, Texoxid
 pub async fn menu_buttons(
     bot: Bot,
     dialogue: TeloxideDialogue,
-    // suits: Vec<String>,
     q: CallbackQuery,
     tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
@@ -65,21 +64,14 @@ async fn handle_suit_callback(
     dialogue: TeloxideDialogue,
     q: CallbackQuery,
     suit_value: String,
-    // suits: Vec<String>,
     mut tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
     log::trace!("suit_value = {}", suit_value);
 
     if let Some(index) = get_index_by_value( tg_contact.clone().suits, suit_value) {
         tg_contact.update_suit(index, "__".to_string());
-        // let suits = modify_by_index(tg_contact.clone().suits, index, "__".to_string());
-        let ranks = vec![  // fixme
-            "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
-        ];
 
-
-        let suits = tg_contact.clone().suits;
-        let keyboard = make_keyboard(suits.iter().map(|c| c.as_str()).collect(), ranks);
+        let keyboard = make_keyboard(tg_contact.clone());
 
         bot.edit_message_reply_markup(dialogue.chat_id(), q.message.unwrap()
         .id)

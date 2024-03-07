@@ -23,20 +23,20 @@ type TeloxideDialogue = Dialogue<State, InMemStorage<State>>;
 #[derive(Clone)]
 pub struct TgContact {
     suits: Vec<String>,
+    ranks: Vec<String>,
 }
 
 
 impl TgContact {
     fn new() -> Self {
-        let (suits, _) = give_default();
+        let (suits, ranks) = give_default();
         Self {
             suits,
+            ranks,
         }
     }
     fn update_suit(&mut self, index: usize, value: String) {
-        // if Some(self.suits[index]).is_some() {
-            self.suits[index] = value;
-        // }
+        self.suits[index] = value;
     }
 }
 

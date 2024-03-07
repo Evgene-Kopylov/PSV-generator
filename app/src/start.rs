@@ -1,4 +1,3 @@
-use patience_lib::patience::give_default;
 use teloxide::{
     prelude::*,
     types::{InlineKeyboardButton, InlineKeyboardMarkup},
@@ -15,22 +14,20 @@ pub async fn start(
 ) -> Result<(), TexoxideError> {
     log::trace!("Start");
     let tg_contact = TgContact::new();
-    // let (suits, _) = give_default();
-    spawn_menu(bot, msg, tg_contact.clone().suits).await?;
+    spawn_menu(bot, msg, tg_contact.clone()).await?;
     dialoque.update(State::Menu { tg_contact }).await?;
     log::trace!("Произошел спавн меню.");
     Ok(())
 }
 
-pub async fn spawn_menu(bot: Bot, msg: Message, suits: Vec<String>) -> Result<(), TexoxideError> {
-    // let suits = vec!["☐", "L", "▲", "♡", "○"];
-    let ranks = vec![
-        "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
-    ];
-
+pub async fn spawn_menu(
+    bot: Bot, 
+    msg: Message, 
+    tg_contact: TgContact,
+) -> Result<(), TexoxideError> {
     let text = "Пасьянс Симпатии и Валентности.";
 
-    let keyboard = make_keyboard(suits.iter().map(|c| c.as_str()).collect(), ranks);
+    let keyboard = make_keyboard( tg_contact );
     let _message: Message = bot
         .send_message(msg.chat.id, text)
         .reply_markup(keyboard)
@@ -38,15 +35,15 @@ pub async fn spawn_menu(bot: Bot, msg: Message, suits: Vec<String>) -> Result<()
     Ok(())
 }
 
-pub fn make_keyboard(suits: Vec<&str>, ranks: Vec<&str>) -> InlineKeyboardMarkup {
+pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
     let mut keyboard: Vec<Vec<InlineKeyboardButton>> = vec![];
 
     // дополнить список рангов до кратной числу кнопок в ряду длянны.
     let btn_row_size = 5;
-    let mut ranks = ranks.clone();
+    let mut ranks = tg_contact.clone().ranks;
     let reminder = btn_row_size - ranks.len() % btn_row_size;
     if ranks.len() % btn_row_size > 0 && reminder > 0 {
-        ranks.extend(std::iter::repeat(" ").take(reminder));
+        ranks.extend(std::iter::repeat(" ".to_string()).take(reminder));
     }
 
     // Информационная кнопка
@@ -57,7 +54,7 @@ pub fn make_keyboard(suits: Vec<&str>, ranks: Vec<&str>) -> InlineKeyboardMarkup
     for rank in ranks.chunks(btn_row_size) {
         let row = rank
             .iter()
-            .map(|&item| InlineKeyboardButton::callback(item, "rank_".to_owned() + item))
+            .map(|item| InlineKeyboardButton::callback(item, "rank_".to_owned() + &item))
             .collect();
 
         keyboard.push(row);
@@ -66,15 +63,15 @@ pub fn make_keyboard(suits: Vec<&str>, ranks: Vec<&str>) -> InlineKeyboardMarkup
     keyboard.push(row);
 
     // Дополнить список мастей до кратной числу кнопок в ряду длинны.
-    let mut suits = suits.clone();
+    let mut suits = tg_contact.suits;
     if suits.len() < btn_row_size {
-        suits.extend(std::iter::repeat(" ").take(btn_row_size - suits.len()));
+        suits.extend(std::iter::repeat(" ".to_string()).take(btn_row_size - suits.len()));
     }
 
     // линия мастей.
     let row = suits
         .iter()
-        .map(|&item| InlineKeyboardButton::callback(item, "suit_".to_owned() + item))
+        .map(|item| InlineKeyboardButton::callback(item, "suit_".to_owned() + &item))
         .collect();
     keyboard.push(row);
 
