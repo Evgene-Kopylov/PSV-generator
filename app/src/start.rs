@@ -1,3 +1,4 @@
+use patience_lib::patience::Card;
 use teloxide::{
     prelude::*,
     types::{InlineKeyboardButton, InlineKeyboardMarkup},
@@ -40,6 +41,7 @@ pub async fn spawn_menu(
 
 /// # Разметка клавиш
 pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
+    // dbg!(&tg_contact.chain);
     let mut keyboard: Vec<Vec<InlineKeyboardButton>> = vec![];
 
     // дополнить список рангов до кратной числу кнопок в ряду длянны.
@@ -67,7 +69,7 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
     keyboard.push(row);
 
     // Дополнить список мастей до кратной числу кнопок в ряду длинны.
-    let mut suits = tg_contact.suits;
+    let mut suits = tg_contact.clone().suits;
     if suits.len() < btn_row_size {
         suits.extend(std::iter::repeat(" ".to_string()).take(btn_row_size - suits.len()));
     }
@@ -78,6 +80,30 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
         .map(|item| InlineKeyboardButton::callback(item, "suit_".to_owned() + &item))
         .collect();
     keyboard.push(row);
+
+
+    let mut chain = tg_contact.clone().chain;
+    // let reminder = btn_row_size - chain.len() % btn_row_size;
+    // if chain.len() % btn_row_size > 0 && reminder > 0 {
+    //     for _ in 0..reminder {
+    //         chain.push(None);
+    //     }
+    // } 
+
+
+
+    // Цепочка
+    let row = vec![InlineKeyboardButton::callback("Цепочка", "info_chain")];
+    keyboard.push(row);
+    // грид цепочки
+    for row_of_cards in chain.chunks(btn_row_size) {
+        let row = row_of_cards
+            .iter()
+            .map(|item| InlineKeyboardButton::callback("item", "card_".to_owned()))
+            .collect();
+
+        keyboard.push(row);
+    }
 
     // Задать целевую последовательность и сложить пасьянс.
     let row = vec![

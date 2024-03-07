@@ -24,7 +24,7 @@ type TeloxideDialogue = Dialogue<State, InMemStorage<State>>;
 pub struct TgContact {
     suits: Vec<String>,
     ranks: Vec<String>,
-    chain: Vec<Card>,
+    chain: Vec<Option<Card>>,
 }
 
 
@@ -40,6 +40,11 @@ impl TgContact {
     }
     fn update_suit(&mut self, index: usize, value: String) {
         self.suits[index] = value;
+    }
+    fn chain_extend(&mut self) {
+        // let rank = (self.chain.len() + 1).to_string();
+        self.chain.push(None);
+        // dbg!(&self.chain);
     }
 }
 

@@ -40,7 +40,10 @@ pub struct MySpread {
 
 impl Card {
     pub fn new(suit: String, rank: String) -> Self {
-        Self { suit, rank }
+            Self { 
+                suit, 
+                rank, 
+            }
     }
 
     pub fn from_str(s: &str) -> Option<Self> {
