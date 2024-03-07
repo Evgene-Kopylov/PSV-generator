@@ -20,6 +20,8 @@ pub async fn start(
     Ok(())
 }
 
+
+/// # спавн меню
 pub async fn spawn_menu(
     bot: Bot, 
     msg: Message, 
@@ -35,6 +37,8 @@ pub async fn spawn_menu(
     Ok(())
 }
 
+
+/// # Разметка клавиш
 pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
     let mut keyboard: Vec<Vec<InlineKeyboardButton>> = vec![];
 
@@ -77,9 +81,10 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
 
     // Задать целевую последовательность и сложить пасьянс.
     let row = vec![
-        InlineKeyboardButton::callback("...", "set_target_chain"),
-        InlineKeyboardButton::callback("< __ >", "space_card"),
-        InlineKeyboardButton::callback(">>>", "patience"),
+        InlineKeyboardButton::callback("➖", "-"),
+        InlineKeyboardButton::callback("➕", "+"),
+        InlineKeyboardButton::callback("➕➕➕", "+++"),
+        InlineKeyboardButton::callback(">>>", ">>>"),
     ];
     keyboard.push(row);
 
