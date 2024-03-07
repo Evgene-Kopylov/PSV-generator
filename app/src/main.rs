@@ -47,6 +47,10 @@ impl TgContact {
             self.chain.push(None);
         }
     }
+
+    fn chain_reduce(&mut self) {
+        self.chain.pop();
+    }
 }
 
 #[derive(Clone, Default)]

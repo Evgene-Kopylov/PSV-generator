@@ -38,12 +38,47 @@ pub async fn menu_buttons(
         data if data.starts_with("+") => {
             handle_plus_btn(bot, dialogue, q.clone(), tg_contact).await?
         }
-
+        data if data.starts_with("-") => {
+            handle_minus_btn(bot, dialogue, q.clone(), tg_contact).await?
+        }
         _ => {
             log::debug!("Не определена категория");
         }
     }
 
+    Ok(())
+}
+
+async fn handle_minus_btn(
+    bot: Bot,
+    dialogue: TeloxideDialogue,
+    q: CallbackQuery,
+    mut tg_contact: TgContact,
+) -> Result<(), TexoxideError> {
+    tg_contact.chain_reduce();
+
+    update_menu(bot, dialogue, q, tg_contact).await?;
+
+    Ok(())
+}
+
+async fn update_menu(
+    bot: Bot,
+    dialogue: TeloxideDialogue,
+    q: CallbackQuery,
+    mut tg_contact: TgContact,
+) -> Result<(), TexoxideError> {
+    let keyboard = make_keyboard(tg_contact.clone());
+
+    let old_msg = &q.message.clone().unwrap();
+    let old_keyboard = old_msg.reply_markup().unwrap();
+    let new_keyboard = &keyboard;
+    if old_keyboard != new_keyboard {
+        bot.edit_message_reply_markup(dialogue.chat_id(), q.message.unwrap().id)
+            .reply_markup(keyboard)
+            .await?;
+        dialogue.update(State::Menu { tg_contact }).await?;
+    }
     Ok(())
 }
 
@@ -54,30 +89,18 @@ async fn handle_plus_btn(
     // data: &str,
     mut tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
-    let data = q.data.unwrap_or(String::new());
-    log::debug!("{}", data);
+    let data = q.data.clone().unwrap_or(String::new());
+    log::trace!("btn {}", data);
     let count = data
         .strip_prefix("+")
         .unwrap_or("0")
         .parse::<usize>()
         .unwrap_or(0);
-    log::debug!("{}", count);
 
     tg_contact.chain_extend(count);
-    // dialogue.update(State::Menu { tg_contact }).await?;
 
-    let keyboard = make_keyboard(tg_contact.clone());
+    update_menu(bot, dialogue, q, tg_contact).await?;
 
-    let old_msg = &q.message.clone().unwrap();
-    let old_keyboard = old_msg.reply_markup().unwrap();
-    let new_keyboard = &keyboard;
-    dbg!(old_keyboard == new_keyboard);
-    if old_keyboard != new_keyboard {
-        bot.edit_message_reply_markup(dialogue.chat_id(), q.message.unwrap().id)
-            .reply_markup(keyboard)
-            .await?;
-        dialogue.update(State::Menu { tg_contact }).await?;
-    }
     Ok(())
 }
 
