@@ -51,7 +51,7 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
     }
 
     // Информационная кнопка
-    let row = vec![InlineKeyboardButton::callback("Ранги", "ranks")];
+    let row = vec![InlineKeyboardButton::callback("Ранги", "info_ranks")];
     keyboard.push(row);
 
     // грид кнопок рангов
@@ -63,7 +63,7 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
 
         keyboard.push(row);
     }
-    let row = vec![InlineKeyboardButton::callback("Масти", "suits")];
+    let row = vec![InlineKeyboardButton::callback("Масти", "info_suits")];
     keyboard.push(row);
 
     // Дополнить список мастей до кратной числу кнопок в ряду длинны.

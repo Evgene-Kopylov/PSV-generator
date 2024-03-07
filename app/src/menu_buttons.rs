@@ -16,24 +16,23 @@ pub async fn menu_buttons(
     log::trace!("menu_buttons");
     let callback_data = q.clone().data.unwrap_or_default();
 
-    if let Some((category, value)) = split_callback_data(&callback_data) {
-        match category {
-            "rank" => handle_rank_callback(bot, dialogue, q.clone(), value).await?,
-            "suit" => {
+    match callback_data {
+        data if data.starts_with("rank") => handle_rank_callback(bot, dialogue, q.clone(), &data).await?,
+        data if data.starts_with("suit") => {
                 handle_suit_callback(
                     bot, 
                     dialogue, 
                     q.clone(), 
-                    value.to_string(),
+                    &data,
                     tg_contact).await?
             }
-            _ => {
-                log::debug!("Unknown category, handle accordingly or ignore");
-            }
+        data if data.starts_with("info") => { log::trace!("Информационная кнопка"); }
+        
+        _ => {
+            log::debug!("Не определена категория");
         }
-    } else {
-        log::debug!("{:#?}", &callback_data);
     }
+
 
     Ok(())
 }
@@ -51,11 +50,12 @@ async fn handle_rank_callback(
     bot: Bot,
     dialogue: TeloxideDialogue,
     q: CallbackQuery,
-    rank_value: &str,
+    data: &str,
 ) -> Result<(), TexoxideError> {
     // Handle rank callback, perform actions based on the rank value
     // ...
-    log::trace!("rank_value = {}", rank_value);
+    let (_, rank) = split_callback_data(data).unwrap();
+    log::trace!("rank_value = {}", rank);
     Ok(())
 }
 
@@ -63,12 +63,13 @@ async fn handle_suit_callback(
     bot: Bot,
     dialogue: TeloxideDialogue,
     q: CallbackQuery,
-    suit_value: String,
+    data: &str,
     mut tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
-    log::trace!("suit_value = {}", suit_value);
+    let (_, suit) = split_callback_data(data).unwrap();
+    log::trace!("suit_value = {}", suit);
 
-    if let Some(index) = get_index_by_value( tg_contact.clone().suits, suit_value) {
+    if let Some(index) = get_index_by_value( tg_contact.clone().suits, suit.to_string()) {
         tg_contact.update_suit(index, "__".to_string());
 
         let keyboard = make_keyboard(tg_contact.clone());

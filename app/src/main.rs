@@ -14,7 +14,7 @@ use dotenv::dotenv;
 use std::error::Error;
 
 use logging::logging_config;
-use patience_lib::patience::give_default;
+use patience_lib::patience::{give_default, Card};
 
 type TexoxideError = Box<dyn Error + Send + Sync>;
 type TeloxideDialogue = Dialogue<State, InMemStorage<State>>;
@@ -24,15 +24,18 @@ type TeloxideDialogue = Dialogue<State, InMemStorage<State>>;
 pub struct TgContact {
     suits: Vec<String>,
     ranks: Vec<String>,
+    chain: Vec<Card>,
 }
 
 
 impl TgContact {
     fn new() -> Self {
         let (suits, ranks) = give_default();
+        let chain = Vec::new();
         Self {
             suits,
             ranks,
+            chain,
         }
     }
     fn update_suit(&mut self, index: usize, value: String) {
