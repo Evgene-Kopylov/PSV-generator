@@ -46,7 +46,6 @@ pub enum State {
     #[default]
     Start,
     Menu {
-        // suits: Vec<String>,
         tg_contact: TgContact,
     },
 }
