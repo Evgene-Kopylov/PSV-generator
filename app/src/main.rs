@@ -40,10 +40,10 @@ impl TgContact {
         self.suits[index] = value;
     }
     fn chain_extend(&mut self, n: usize) {
-        if self.chain.len() >= 40 {
-            return;
-        }
         for _ in 0..n {
+            if self.chain.len() >= 40 {
+                return;
+            }
             self.chain.push(None);
         }
     }

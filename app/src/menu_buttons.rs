@@ -68,11 +68,16 @@ async fn handle_plus_btn(
 
     let keyboard = make_keyboard(tg_contact.clone());
 
-    bot.edit_message_reply_markup(dialogue.chat_id(), q.message.unwrap().id)
-        .reply_markup(keyboard)
-        .await?;
-    dialogue.update(State::Menu { tg_contact }).await?;
-
+    let old_msg = &q.message.clone().unwrap();
+    let old_keyboard = old_msg.reply_markup().unwrap();
+    let new_keyboard = &keyboard;
+    dbg!(old_keyboard == new_keyboard);
+    if old_keyboard != new_keyboard {
+        bot.edit_message_reply_markup(dialogue.chat_id(), q.message.unwrap().id)
+            .reply_markup(keyboard)
+            .await?;
+        dialogue.update(State::Menu { tg_contact }).await?;
+    }
     Ok(())
 }
 
