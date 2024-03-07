@@ -70,7 +70,8 @@ async fn main() {
             Update::filter_callback_query()
                 .branch(dptree::case![State::Menu { tg_contact }].endpoint(menu_buttons)),
         )
-        .branch(Update::filter_message().endpoint(unexpected_text));
+        .branch(Update::filter_message().endpoint(unexpected_text_message))
+        .endpoint(unexpected_update);
 
     Dispatcher::builder(bot, handler)
         .dependencies(dptree::deps![InMemStorage::<State>::new()])
@@ -79,14 +80,23 @@ async fn main() {
         .await;
 }
 
-async fn unexpected_text(bot: Bot, msg: Message) -> Result<(), TexoxideError> {
+async fn unexpected_text_message(bot: Bot, msg: Message) -> Result<(), TexoxideError> {
     let text = "¯\\_(ツ)_/¯";
+    // log::warn!("Сообщение не обработано {:#?}", msg);
     bot.send_message(msg.chat.id, text).await?;
     Ok(())
 }
 
-async fn unexpected_callback(bot: Bot, dialogue: TeloxideDialogue,) -> Result<(), TexoxideError> {
-    let text = "(×﹏×) /start ?";
+async fn unexpected_callback(bot: Bot, dialogue: TeloxideDialogue, _q: CallbackQuery) -> Result<(), TexoxideError> {
+    let text = "(-_-) /start ?";
+    // log::warn!("Не ожиданныйы коллбек {:#?}", q);
     bot.send_message(dialogue.chat_id(), text).await?;
     Ok(())
 }
+
+async fn unexpected_update(update: Update, bot: Bot, dialogue: TeloxideDialogue,) -> Result<(), TexoxideError> {
+    let text = "(×﹏×)";
+    log::warn!("Update не распознан. {:#?}", update);
+    bot.send_message(dialogue.chat_id(), text).await?;
+    Ok(())
+} 
