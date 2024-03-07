@@ -4,7 +4,7 @@ use teloxide::{
     types::{InlineKeyboardButton, InlineKeyboardMarkup},
 };
 
-use crate::State;
+use crate::{State, TgContact};
 use crate::TeloxideDialogue;
 use crate::TexoxideError;
 
@@ -14,9 +14,10 @@ pub async fn start(
     msg: Message,
 ) -> Result<(), TexoxideError> {
     log::trace!("Start");
-    let (suits, _) = give_default();
-    spawn_menu(bot, msg, suits.clone()).await?;
-    dialoque.update(State::Menu { suits: suits }).await?;
+    let tg_contact = TgContact::new();
+    // let (suits, _) = give_default();
+    spawn_menu(bot, msg, tg_contact.clone().suits).await?;
+    dialoque.update(State::Menu { tg_contact }).await?;
     log::trace!("Произошел спавн меню.");
     Ok(())
 }
@@ -30,7 +31,7 @@ pub async fn spawn_menu(bot: Bot, msg: Message, suits: Vec<String>) -> Result<()
     let text = "Пасьянс Симпатии и Валентности.";
 
     let keyboard = make_keyboard(suits.iter().map(|c| c.as_str()).collect(), ranks);
-    let _message = bot
+    let _message: Message = bot
         .send_message(msg.chat.id, text)
         .reply_markup(keyboard)
         .await?;

@@ -5,13 +5,14 @@ use std::ops::Index;
 use log::trace;
 use teloxide::{dispatching::dialogue::GetChatId, payloads::EditMessageReplyMarkupSetters, prelude::{Bot, CallbackQuery}, requests::Requester};
 
-use crate::{start::{make_keyboard, spawn_menu}, State, TeloxideDialogue, TexoxideError};
+use crate::{start::{make_keyboard, spawn_menu}, State, TeloxideDialogue, TexoxideError, TgContact};
 
 pub async fn menu_buttons(
     bot: Bot,
     dialogue: TeloxideDialogue,
-    suits: Vec<String>,
+    // suits: Vec<String>,
     q: CallbackQuery,
+    tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
     log::trace!("menu_buttons");
     let callback_data = q.clone().data.unwrap_or_default();
@@ -20,7 +21,12 @@ pub async fn menu_buttons(
         match category {
             "rank" => handle_rank_callback(bot, dialogue, q.clone(), value).await?,
             "suit" => {
-                handle_suit_callback(bot, dialogue, q.clone(), value.to_string(), suits).await?
+                handle_suit_callback(
+                    bot, 
+                    dialogue, 
+                    q.clone(), 
+                    value.to_string(),
+                    tg_contact).await?
             }
             _ => {
                 log::debug!("Unknown category, handle accordingly or ignore");
@@ -59,22 +65,26 @@ async fn handle_suit_callback(
     dialogue: TeloxideDialogue,
     q: CallbackQuery,
     suit_value: String,
-    suits: Vec<String>,
+    // suits: Vec<String>,
+    mut tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
     log::trace!("suit_value = {}", suit_value);
 
-    if let Some(index) = get_index_by_value(suits.clone(), suit_value) {
-        let suits = modify_by_index(suits, index, "__".to_string());
+    if let Some(index) = get_index_by_value( tg_contact.clone().suits, suit_value) {
+        tg_contact.update_suit(index, "__".to_string());
+        // let suits = modify_by_index(tg_contact.clone().suits, index, "__".to_string());
         let ranks = vec![  // fixme
             "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
         ];
 
+
+        let suits = tg_contact.clone().suits;
         let keyboard = make_keyboard(suits.iter().map(|c| c.as_str()).collect(), ranks);
 
         bot.edit_message_reply_markup(dialogue.chat_id(), q.message.unwrap()
         .id)
         .reply_markup(keyboard).await?;
-        dialogue.update(State::Menu { suits }).await?;
+        dialogue.update(State::Menu { tg_contact }).await?;
     }
 
     Ok(())

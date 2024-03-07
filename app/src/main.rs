@@ -14,16 +14,40 @@ use dotenv::dotenv;
 use std::error::Error;
 
 use logging::logging_config;
+use patience_lib::patience::give_default;
 
 type TexoxideError = Box<dyn Error + Send + Sync>;
 type TeloxideDialogue = Dialogue<State, InMemStorage<State>>;
+
+
+#[derive(Clone)]
+pub struct TgContact {
+    suits: Vec<String>,
+}
+
+
+impl TgContact {
+    fn new() -> Self {
+        let (suits, _) = give_default();
+        Self {
+            suits,
+        }
+    }
+    fn update_suit(&mut self, index: usize, value: String) {
+        // if Some(self.suits[index]).is_some() {
+            self.suits[index] = value;
+        // }
+    }
+}
+
 
 #[derive(Clone, Default)]
 pub enum State {
     #[default]
     Start,
     Menu {
-        suits: Vec<String>,
+        // suits: Vec<String>,
+        tg_contact: TgContact,
     },
 }
 
@@ -45,7 +69,7 @@ async fn main() {
         )
         .branch(
             Update::filter_callback_query()
-                .branch(dptree::case![State::Menu { suits }].endpoint(menu_buttons)),
+                .branch(dptree::case![State::Menu { tg_contact }].endpoint(menu_buttons)),
         )
         .branch(Update::filter_message().endpoint(unexpected_text));
 
