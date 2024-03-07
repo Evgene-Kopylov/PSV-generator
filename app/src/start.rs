@@ -1,12 +1,11 @@
-use patience_lib::patience::Card;
 use teloxide::{
     prelude::*,
     types::{InlineKeyboardButton, InlineKeyboardMarkup},
 };
 
-use crate::{State, TgContact};
 use crate::TeloxideDialogue;
 use crate::TexoxideError;
+use crate::{State, TgContact};
 
 pub async fn start(
     bot: Bot,
@@ -21,16 +20,15 @@ pub async fn start(
     Ok(())
 }
 
-
 /// # спавн меню
 pub async fn spawn_menu(
-    bot: Bot, 
-    msg: Message, 
+    bot: Bot,
+    msg: Message,
     tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
     let text = "Пасьянс Симпатии и Валентности.";
 
-    let keyboard = make_keyboard( tg_contact );
+    let keyboard = make_keyboard(tg_contact);
     let _message: Message = bot
         .send_message(msg.chat.id, text)
         .reply_markup(keyboard)
@@ -38,10 +36,8 @@ pub async fn spawn_menu(
     Ok(())
 }
 
-
 /// # Разметка клавиш
 pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
-    // dbg!(&tg_contact.chain);
     let mut keyboard: Vec<Vec<InlineKeyboardButton>> = vec![];
 
     // дополнить список рангов до кратной числу кнопок в ряду длянны.
@@ -81,16 +77,7 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
         .collect();
     keyboard.push(row);
 
-
-    let mut chain = tg_contact.clone().chain;
-    // let reminder = btn_row_size - chain.len() % btn_row_size;
-    // if chain.len() % btn_row_size > 0 && reminder > 0 {
-    //     for _ in 0..reminder {
-    //         chain.push(None);
-    //     }
-    // } 
-
-
+    let chain = tg_contact.clone().chain;
 
     // Цепочка
     let row = vec![InlineKeyboardButton::callback("Цепочка", "info_chain")];
@@ -99,7 +86,7 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
     for row_of_cards in chain.chunks(btn_row_size) {
         let row = row_of_cards
             .iter()
-            .map(|item| InlineKeyboardButton::callback("item", "card_".to_owned()))
+            .map(|_item| InlineKeyboardButton::callback("item", "card_".to_owned()))
             .collect();
 
         keyboard.push(row);
@@ -108,8 +95,8 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
     // Задать целевую последовательность и сложить пасьянс.
     let row = vec![
         InlineKeyboardButton::callback("➖", "-"),
-        InlineKeyboardButton::callback("➕", "+"),
-        InlineKeyboardButton::callback("➕➕➕", "+++"),
+        InlineKeyboardButton::callback("➕", "+1"),
+        InlineKeyboardButton::callback("➕➕", "+5"),
         InlineKeyboardButton::callback(">>>", ">>>"),
     ];
     keyboard.push(row);

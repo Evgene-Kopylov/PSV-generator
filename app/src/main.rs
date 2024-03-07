@@ -19,14 +19,12 @@ use patience_lib::patience::{give_default, Card};
 type TexoxideError = Box<dyn Error + Send + Sync>;
 type TeloxideDialogue = Dialogue<State, InMemStorage<State>>;
 
-
 #[derive(Clone)]
 pub struct TgContact {
     suits: Vec<String>,
     ranks: Vec<String>,
     chain: Vec<Option<Card>>,
 }
-
 
 impl TgContact {
     fn new() -> Self {
@@ -41,13 +39,15 @@ impl TgContact {
     fn update_suit(&mut self, index: usize, value: String) {
         self.suits[index] = value;
     }
-    fn chain_extend(&mut self) {
-        // let rank = (self.chain.len() + 1).to_string();
-        self.chain.push(None);
-        // dbg!(&self.chain);
+    fn chain_extend(&mut self, n: usize) {
+        if self.chain.len() >= 40 {
+            return;
+        }
+        for _ in 0..n {
+            self.chain.push(None);
+        }
     }
 }
-
 
 #[derive(Clone, Default)]
 pub enum State {
@@ -95,16 +95,24 @@ async fn unexpected_text_message(bot: Bot, msg: Message) -> Result<(), TexoxideE
     Ok(())
 }
 
-async fn unexpected_callback(bot: Bot, dialogue: TeloxideDialogue, _q: CallbackQuery) -> Result<(), TexoxideError> {
-    let text = "(-_-) /start ?";
+async fn unexpected_callback(
+    bot: Bot,
+    dialogue: TeloxideDialogue,
+    _q: CallbackQuery,
+) -> Result<(), TexoxideError> {
+    let text = "(ᵔ.ᵔ) /start ?";
     // log::warn!("Не ожиданныйы коллбек {:#?}", q);
     bot.send_message(dialogue.chat_id(), text).await?;
     Ok(())
 }
 
-async fn unexpected_update(update: Update, bot: Bot, dialogue: TeloxideDialogue,) -> Result<(), TexoxideError> {
+async fn unexpected_update(
+    update: Update,
+    bot: Bot,
+    dialogue: TeloxideDialogue,
+) -> Result<(), TexoxideError> {
     let text = "(×﹏×)";
     log::warn!("Update не распознан. {:#?}", update);
     bot.send_message(dialogue.chat_id(), text).await?;
     Ok(())
-} 
+}
