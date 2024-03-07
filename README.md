@@ -46,6 +46,15 @@ self.suits = suits or ['♠', '♡', '◊', '♣']
 
 # Rust
 ## dev
+
+Для удобства разработки.
+
 ```terminal
 cargo watch -x fmt -x test -x "run --release"
+```
+
+Указать уровень логов в `.env`
+
+```bash
+LOG_LEVEL=info,app=trace
 ```
