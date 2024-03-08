@@ -27,7 +27,7 @@ pub async fn menu_buttons(
 
     match callback_data {
         data if data.starts_with("rank") => {
-            handle_rank_callback(bot, dialogue, q.clone(), &data).await?
+            handle_rank_callback(bot, dialogue, q.clone(), &data, tg_contact).await?
         }
         data if data.starts_with("suit") => {
             handle_suit_callback(bot, dialogue, q.clone(), &data, tg_contact).await?
@@ -142,11 +142,23 @@ async fn handle_rank_callback(
     dialogue: TeloxideDialogue,
     q: CallbackQuery,
     data: &str,
+    mut tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
     // Handle rank callback, perform actions based on the rank value
     // ...
     let (_, rank) = split_callback_data(data);
     log::trace!("rank_value = {}", rank);
+
+    tg_contact.update_chain(Some(rank), None);
+    dbg!(&tg_contact.chain);
+
+    dialogue
+        .update(State::Menu {
+            tg_contact: tg_contact.clone(),
+        })
+        .await?;
+
+    update_menu(bot, dialogue, q, tg_contact).await?;
     Ok(())
 }
 

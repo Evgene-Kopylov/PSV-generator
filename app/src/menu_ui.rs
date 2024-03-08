@@ -98,6 +98,7 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
                 }
             } else {
                 // есть значение карты
+                text = "Some";
             }
             row.push(InlineKeyboardButton::callback(text, callback_data));
             index += 1;

@@ -56,6 +56,21 @@ impl TgContact {
     fn chain_reduce(&mut self) {
         self.chain.pop();
     }
+
+    fn update_chain(&mut self, rank: Option<&str>, suit: Option<&str>) {
+        log::trace!("update chain rank = {:?}, suit = {:?}", rank, suit);
+        if let Some(index) = self.active_index {
+            if let Some(rank) = rank {
+                if let Some(card) = &self.chain[index] {
+                    log::info!("есть карта!!!");
+                } else {
+                    let card = Card::new("_".to_string(), rank.to_string());
+                    self.chain[index] = Some(card);
+                    log::info!("Новая карта!")
+                }
+            }
+        }
+    }
 }
 
 #[derive(Clone, Default)]
