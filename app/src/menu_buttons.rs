@@ -12,7 +12,7 @@ use teloxide::{
 };
 
 use crate::{
-    start::{make_keyboard, spawn_menu},
+    menu_ui::{make_keyboard, spawn_menu},
     State, TeloxideDialogue, TexoxideError, TgContact,
 };
 

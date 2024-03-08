@@ -4,8 +4,8 @@ use teloxide::{
     types::Update,
 };
 
-mod start;
-use start::start;
+mod menu_ui;
+use menu_ui::start;
 
 mod menu_buttons;
 use menu_buttons::menu_buttons;
