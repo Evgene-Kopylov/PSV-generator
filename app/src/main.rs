@@ -61,7 +61,7 @@ impl TgContact {
         log::trace!("update chain rank = {:?}, suit = {:?}", rank, suit);
         if let Some(index) = self.active_index {
             if let Some(rank) = rank {
-                if let Some(card) = &self.chain[index] {
+                if let Some(_card) = &self.chain[index] {
                     log::info!("есть карта!!!");
                 } else {
                     let card = Card::new("_".to_string(), rank.to_string());
