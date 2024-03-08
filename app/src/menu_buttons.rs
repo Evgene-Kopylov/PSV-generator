@@ -97,7 +97,7 @@ async fn handle_plus_btn(
         .parse::<usize>()
         .unwrap_or(0);
 
-    tg_contact.chain_extend(count);
+    tg_contact.chain_expend(count);
 
     update_menu(bot, dialogue, q, tg_contact).await?;
 

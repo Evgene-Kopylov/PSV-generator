@@ -39,7 +39,7 @@ impl TgContact {
     fn update_suit(&mut self, index: usize, value: String) {
         self.suits[index] = value;
     }
-    fn chain_extend(&mut self, n: usize) {
+    fn chain_expend(&mut self, n: usize) {
         for _ in 0..n {
             if self.chain.len() >= 40 {
                 return;
