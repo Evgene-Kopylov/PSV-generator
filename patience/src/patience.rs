@@ -7,8 +7,8 @@ use crate::settings::MAX_ITERATIONS;
 
 #[derive(Debug, Default, Clone, PartialEq)]
 pub struct Card {
-    pub suit: String,
-    pub rank: String,
+    pub suit: Option<String>,
+    pub rank: Option<String>,
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -40,17 +40,17 @@ pub struct MySpread {
 
 impl Card {
     pub fn new(suit: String, rank: String) -> Self {
-            Self { 
-                suit, 
-                rank, 
-            }
+        Self {
+            suit: Some(suit),
+            rank: Some(rank),
+        }
     }
 
     pub fn from_str(s: &str) -> Option<Self> {
         let mut v: Vec<char> = s.chars().collect();
         Some(Self {
-            suit: v.pop()?.to_string(),
-            rank: v.iter().collect(),
+            suit: Some(v.pop()?.to_string()),
+            rank: Some(v.iter().collect()),
         })
     }
 }
@@ -101,8 +101,15 @@ impl MySpread {
         let mut line: String = String::new();
         line += "\n### Сведение\n\n";
         line += &chain
+            .clone()
             .iter()
-            .map(|c| format!("{}{}", c.rank, c.suit))
+            .map(|c| {
+                format!(
+                    "{}{}",
+                    c.clone().rank.unwrap_or("_".to_string()),
+                    c.clone().suit.unwrap_or("_".to_string())
+                )
+            })
             .collect::<Vec<_>>()
             .join("  ");
         line += "\n";
@@ -117,21 +124,38 @@ impl MySpread {
             }
             for j in 0..current - 2 {
                 line += "   ";
-                line += &" ".repeat(chain[j].rank.chars().count());
+                line += &" ".repeat(
+                    chain[j]
+                        .rank
+                        .clone()
+                        .unwrap_or("_".to_string())
+                        .chars()
+                        .count(),
+                );
 
                 if (&chain[j].suit == &chain[j + 2].suit) || (&chain[j].rank == &chain[j + 2].rank)
                 {
                     line += &format!(
                         "{}{}\n",
-                        chain[j + 1].rank.blue(),
-                        chain[j + 1].suit.yellow()
+                        chain[j + 1].rank.clone().unwrap_or("_".to_string()).blue(),
+                        chain[j + 1]
+                            .suit
+                            .clone()
+                            .unwrap_or("_".to_string())
+                            .yellow()
                     );
 
                     chain.remove(j + 1);
 
                     line += &chain
                         .iter()
-                        .map(|c| format!("{}{}", c.rank, c.suit))
+                        .map(|c| {
+                            format!(
+                                "{}{}",
+                                c.clone().rank.unwrap_or("_".to_string()),
+                                c.clone().suit.unwrap_or("_".to_string())
+                            )
+                        })
                         .collect::<Vec<_>>()
                         .join("  ");
                     line += "\n";
@@ -190,8 +214,8 @@ impl MySpread {
     fn print_chain(&self, chain: Vec<Card>) -> () {
         let mut line = String::new();
         for c in &chain {
-            line += &c.rank;
-            line += &c.suit;
+            line += &c.clone().rank.unwrap_or("_".to_string());
+            line += &c.clone().suit.unwrap_or("_".to_string());
             line += "  ";
         }
     }
