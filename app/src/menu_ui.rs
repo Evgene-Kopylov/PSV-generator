@@ -80,14 +80,28 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
     let chain = tg_contact.clone().chain;
 
     // Цепочка
-    let row = vec![InlineKeyboardButton::callback("Цепочка", "info_chain")];
+    let text = format!("Цепочка {} карт", chain.len());
+    let row = vec![InlineKeyboardButton::callback(text, "info_chain")];
     keyboard.push(row);
     // грид цепочки
-    for row_of_cards in chain.chunks(btn_row_size) {
-        let row = row_of_cards
-            .iter()
-            .map(|_item| InlineKeyboardButton::callback("item", "card_".to_owned()))
-            .collect();
+    let mut index = 0;
+    for chank in chain.chunks(btn_row_size) {
+        let mut row = vec![];
+        for item in chank {
+            let mut text = "  ";
+            let callback_data = format!("item_{}", &index);
+            if item.is_none() {
+                if let Some(active_index) = tg_contact.active_index {
+                    if active_index == index {
+                        text = "_ _";
+                    }
+                }
+            } else {
+                // есть значение карты
+            }
+            row.push(InlineKeyboardButton::callback(text, callback_data));
+            index += 1;
+        }
 
         keyboard.push(row);
     }

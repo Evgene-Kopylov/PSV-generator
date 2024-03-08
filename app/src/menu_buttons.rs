@@ -41,11 +41,35 @@ pub async fn menu_buttons(
         data if data.starts_with("-") => {
             handle_minus_btn(bot, dialogue, q.clone(), tg_contact).await?
         }
+        data if data.starts_with("item") => {
+            handle_selected_item(bot, dialogue, q.clone(), tg_contact).await?
+        }
         _ => {
             log::debug!("Не определена категория");
         }
     }
 
+    Ok(())
+}
+
+async fn handle_selected_item(
+    bot: Bot,
+    dialogue: TeloxideDialogue,
+    q: CallbackQuery,
+    mut tg_contact: TgContact,
+) -> Result<(), TexoxideError> {
+    let data = q.data.clone().unwrap_or(String::new());
+    let parts: Vec<&str> = data.split('_').collect();
+    if parts.len() == 2 {
+        let index = parts[1].parse::<usize>().unwrap();
+        log::trace!("active_index = {}", &index);
+        tg_contact.active_index = Some(index);
+        dialogue.update(State::Menu {
+            tg_contact: tg_contact.clone(),
+        });
+    }
+
+    update_menu(bot, dialogue, q, tg_contact).await?;
     Ok(())
 }
 

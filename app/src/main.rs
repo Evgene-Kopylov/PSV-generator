@@ -24,16 +24,21 @@ pub struct TgContact {
     suits: Vec<String>,
     ranks: Vec<String>,
     chain: Vec<Option<Card>>,
+    active_index: Option<usize>,
 }
 
 impl TgContact {
     fn new() -> Self {
         let (suits, ranks) = give_default();
-        let chain = Vec::new();
+        let mut chain = Vec::new();
+        for _ in 0..10 {
+            chain.push(None);
+        }
         Self {
             suits,
             ranks,
             chain,
+            active_index: None,
         }
     }
     fn update_suit(&mut self, index: usize, value: String) {
