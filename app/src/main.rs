@@ -1,7 +1,7 @@
 use teloxide::{
     dispatching::{dialogue::InMemStorage, UpdateFilterExt},
     prelude::*,
-    types::{MessageId, ParseMode, Update},
+    types::Update,
 };
 
 mod menu_ui;

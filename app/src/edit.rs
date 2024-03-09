@@ -1,22 +1,13 @@
 // #![allow(unused)] // FIXME
 
 use crate::menu_buttons::update_menu;
-use std::{fmt::Display, usize};
-use teloxide::{
-    payloads::EditMessageReplyMarkupSetters,
-    prelude::{Bot, CallbackQuery},
-    requests::Requester,
-    types::Message,
-};
+use teloxide::{prelude::Bot, requests::Requester, types::Message};
 
-use crate::{menu_ui::make_keyboard, State, TeloxideDialogue, TexoxideError, TgContact};
-
-use patience_lib::patience::{Deck, MySpread};
+use crate::{State, TeloxideDialogue, TexoxideError, TgContact};
 
 pub async fn edit(
     bot: Bot,
     dialogue: TeloxideDialogue,
-    // q: CallbackQuery,
     msg: Message,
     mut tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
@@ -35,7 +26,6 @@ pub async fn edit(
                 })
                 .await?;
             update_menu(bot, dialogue, msg, tg_contact).await?;
-            // log::trace!("выбрана новая масть suit = {}", msg.text().unwrap());
         }
     }
     Ok(())
