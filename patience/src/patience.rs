@@ -14,7 +14,7 @@ pub struct Card {
 #[derive(Debug, PartialEq, Clone)]
 pub struct Deck {
     pub suits: Vec<String>,
-    pub nominals: Vec<String>,
+    pub ranks: Vec<String>,
     pub full_deck: Vec<Card>,
     pub current_deck: Vec<Card>,
 }
@@ -67,11 +67,11 @@ impl Card {
 }
 
 impl Deck {
-    pub fn new(suits: Vec<String>, nominals: Vec<String>) -> Self {
+    pub fn new(suits: Vec<String>, ranks: Vec<String>) -> Self {
         let mut full_deck: Vec<Card> = vec![];
 
         for s in &suits {
-            for n in &nominals {
+            for n in &ranks {
                 let card = Card::new(s.clone(), n.clone());
                 full_deck.push(card.clone());
             }
@@ -79,7 +79,7 @@ impl Deck {
 
         Self {
             suits,
-            nominals,
+            ranks,
             full_deck: full_deck.clone(),
             current_deck: full_deck,
         }
