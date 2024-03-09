@@ -5,6 +5,7 @@ use teloxide::{
 };
 
 mod menu_ui;
+mod patience;
 mod tg_contact;
 use menu_ui::start;
 
@@ -28,6 +29,9 @@ pub enum State {
     #[default]
     Start,
     Menu {
+        tg_contact: TgContact,
+    },
+    Patience {
         tg_contact: TgContact,
     },
 }
@@ -58,6 +62,11 @@ async fn main() {
             Update::filter_message()
                 .branch(dptree::case![State::Menu { tg_contact }].endpoint(edit)),
         )
+        // Patience
+        // .branch(
+        //     Update::filter_callback_query()
+        //         .branch(dptree::case![State::Patience { tg_contact }].endpoint(patience)),
+        // )
         // Не к месту.
         .branch(Update::filter_message().endpoint(unexpected_text_message))
         .endpoint(unexpected_update);

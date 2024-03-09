@@ -15,7 +15,7 @@ pub async fn start(
     log::trace!("Start");
     let mut tg_contact = TgContact::new();
     let menu_message = spawn_menu(bot, msg, tg_contact.clone()).await?;
-    tg_contact.active_keyboard = Some(menu_message);
+    tg_contact.menu_msg = Some(menu_message);
     dialoque.update(State::Menu { tg_contact }).await?;
     log::trace!("Произошел спавн меню.");
     Ok(())

@@ -9,7 +9,8 @@ pub struct TgContact {
     pub chain: Vec<Option<Card>>,
     pub chain_index: Option<usize>,
     pub suit_index: Option<usize>,
-    pub active_keyboard: Option<Message>,
+    pub menu_msg: Option<Message>,
+    pub patience: Option<Vec<Card>>,
 }
 
 impl TgContact {
@@ -25,7 +26,8 @@ impl TgContact {
             chain,
             chain_index: None,
             suit_index: None,
-            active_keyboard: None,
+            menu_msg: None,
+            patience: None,
         }
     }
     pub fn update_suit<T, V>(&mut self, index: T, value: V)

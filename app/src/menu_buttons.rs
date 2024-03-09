@@ -8,7 +8,10 @@ use teloxide::{
     requests::Requester,
 };
 
-use crate::{menu_ui::make_keyboard, State, TeloxideDialogue, TexoxideError, TgContact};
+use crate::{
+    menu_ui::make_keyboard, patience::spawn_patience_chain, State, TeloxideDialogue, TexoxideError,
+    TgContact,
+};
 
 use patience_lib::patience::{Deck, MySpread};
 
@@ -50,10 +53,10 @@ pub async fn menu_buttons(
 }
 
 async fn have_patience(
-    _bot: Bot,
-    _dialogue: TeloxideDialogue,
+    bot: Bot,
+    dialogue: TeloxideDialogue,
     _q: CallbackQuery,
-    tg_contact: TgContact,
+    mut tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
     log::trace!("Попытка сложить пасьянс.");
     if tg_contact.clone().chain.len() <= 2 {
@@ -62,10 +65,17 @@ async fn have_patience(
     }
     log::trace!("chain len = {}", tg_contact.clone().chain.len());
 
-    let deck = Deck::new(tg_contact.suits, tg_contact.ranks);
+    let deck = Deck::new(tg_contact.suits.clone(), tg_contact.ranks.clone());
     let mut my_spread = MySpread::new(deck);
-    if let Some((_chain, _leftover, iteration)) = my_spread.patience(tg_contact.chain, 5000).await {
+    if let Some((chain, _leftover, iteration)) =
+        my_spread.patience(tg_contact.chain.clone(), 5000).await
+    {
         log::trace!("Сложилось. Итерация {}", iteration);
+        tg_contact.patience = Some(chain);
+        dialogue.update(State::Patience {
+            tg_contact: tg_contact.clone(),
+        });
+        spawn_patience_chain(bot, tg_contact.clone()).await?;
     } else {
         log::trace!("Не сложилось.")
     }
@@ -119,18 +129,18 @@ pub async fn update_menu(
     // собрать новуыю клавиатуру
     let keyboard = make_keyboard(tg_contact.clone());
 
-    let menu_message = tg_contact.active_keyboard.clone().unwrap();
+    let menu_message = tg_contact.menu_msg.clone().unwrap();
     let old_keyboard = menu_message.reply_markup().unwrap();
     let new_keyboard = &keyboard;
 
     // если изменения в клавиатуре, применить
     if old_keyboard != new_keyboard {
-        let msg_id = tg_contact.active_keyboard.unwrap().id;
+        let msg_id = tg_contact.menu_msg.unwrap().id;
         let message = bot
             .edit_message_reply_markup(dialogue.chat_id(), msg_id)
             .reply_markup(keyboard)
             .await?;
-        tg_contact.active_keyboard = Some(message);
+        tg_contact.menu_msg = Some(message);
         dialogue.update(State::Menu { tg_contact }).await?;
     }
     Ok(())
