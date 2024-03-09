@@ -2,16 +2,15 @@
 
 use std::{fmt::Display, usize};
 
+use crate::menu::ui::make_keyboard;
+
 use teloxide::{
     payloads::EditMessageReplyMarkupSetters,
     prelude::{Bot, CallbackQuery},
     requests::Requester,
 };
 
-use crate::{
-    menu_ui::make_keyboard, patience::spawn_patience_chain, State, TeloxideDialogue, TexoxideError,
-    TgContact,
-};
+use crate::{patience::spawn_patience_chain, State, TeloxideDialogue, TexoxideError, TgContact};
 
 use patience_lib::patience::{Deck, MySpread};
 

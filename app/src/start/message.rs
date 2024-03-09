@@ -5,7 +5,7 @@ use teloxide::{
 };
 
 use crate::TexoxideError;
-use crate::{menu_ui::spawn_menu, TeloxideDialogue};
+use crate::{menu::ui::spawn_menu, TeloxideDialogue};
 use crate::{State, TgContact};
 
 pub async fn start(

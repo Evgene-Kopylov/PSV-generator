@@ -1,9 +1,9 @@
 // #![allow(unused)] // FIXME
 
-use crate::menu_buttons::update_menu;
+// use crate::menu_buttons::update_menu;
 use teloxide::{prelude::Bot, requests::Requester, types::Message};
 
-use crate::{State, TeloxideDialogue, TexoxideError, TgContact};
+use crate::{menu::buttons::update_menu, State, TeloxideDialogue, TexoxideError, TgContact};
 
 pub async fn edit(
     bot: Bot,
