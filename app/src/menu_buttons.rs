@@ -14,7 +14,7 @@ pub async fn menu_buttons(
     bot: Bot,
     dialogue: TeloxideDialogue,
     q: CallbackQuery,
-    mut tg_contact: TgContact,
+    tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
     log::trace!("menu_buttons");
     let callback_data = q.clone().data.unwrap_or_default();
@@ -58,9 +58,11 @@ async fn handle_select_in_chain(
         let index = parts[1].parse::<usize>().unwrap();
         log::trace!("active_index = {}", &index);
         tg_contact.active_index = Some(index);
-        dialogue.update(State::Menu {
-            tg_contact: tg_contact.clone(),
-        });
+        dialogue
+            .update(State::Menu {
+                tg_contact: tg_contact.clone(),
+            })
+            .await?;
     }
 
     update_menu(bot, dialogue, q, tg_contact).await?;
@@ -84,7 +86,7 @@ async fn update_menu(
     bot: Bot,
     dialogue: TeloxideDialogue,
     q: CallbackQuery,
-    mut tg_contact: TgContact,
+    tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
     let keyboard = make_keyboard(tg_contact.clone());
 
