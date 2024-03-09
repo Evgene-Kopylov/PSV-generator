@@ -140,8 +140,6 @@ async fn handle_rank_callback(
     data: &str,
     mut tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
-    // Handle rank callback, perform actions based on the rank value
-    // ...
     let (_, rank) = split_callback_data(data);
     log::trace!("rank_value = {}", rank);
 
