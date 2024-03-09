@@ -4,15 +4,15 @@ use crate::patience::*;
 #[test]
 fn test_card_creation() {
     let card = Card::new("♡".to_string(), "A".to_string());
-    assert_eq!(card.suit, "♡");
-    assert_eq!(card.rank, "A");
+    assert_eq!(card.suit.unwrap(), "♡".to_string());
+    assert_eq!(card.rank.unwrap(), "A".to_string());
 }
 
 #[test]
 fn test_card_creation_from_str() {
     let card = Card::from_str("3♢").unwrap();
-    assert_eq!(card.suit, "♢");
-    assert_eq!(card.rank, "3");
+    assert_eq!(card.suit.unwrap(), "♢".to_string());
+    assert_eq!(card.rank.unwrap(), "3".to_string());
 }
 
 #[test]
