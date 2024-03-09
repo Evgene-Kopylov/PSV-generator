@@ -6,8 +6,10 @@ use teloxide::{
 
 mod menu_ui;
 mod patience;
+mod start;
 mod tg_contact;
-use menu_ui::start;
+use crate::start::message::start as handle_start_message;
+// use menu_ui::start;
 
 mod menu_buttons;
 use menu_buttons::menu_buttons;
@@ -48,7 +50,10 @@ async fn main() {
     let handler = dptree::entry()
         .enter_dialogue::<Update, InMemStorage<State>, State>()
         // Start
-        .branch(Update::filter_message().branch(dptree::case![State::Start].endpoint(start)))
+        .branch(
+            Update::filter_message()
+                .branch(dptree::case![State::Start].endpoint(handle_start_message)),
+        )
         .branch(
             Update::filter_callback_query()
                 .branch(dptree::case![State::Start].endpoint(unexpected_callback)),
