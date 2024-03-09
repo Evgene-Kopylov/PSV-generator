@@ -82,7 +82,11 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
     // Цепочка
     let mut text = String::new();
     if tg_contact.active_index.is_some() {
-        text += &format!("index {}", tg_contact.clone().active_index.unwrap());
+        text += &format!(
+            "Карта № {} из {}",
+            tg_contact.clone().active_index.unwrap() + 1,
+            chain.len()
+        );
     } else {
         text += &format!("Цепочка {} карт", chain.len());
     }
