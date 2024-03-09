@@ -204,12 +204,11 @@ impl MySpread {
 
     pub fn patience(&mut self, chain: Vec<Option<Card>>) -> () {
         // log::info!("patience!!!");
-        println!("Patience...");
-
+        // println!("Patience...");
         for i in 0..MAX_ITERATIONS {
             self.deck.refresh_deck();
             self.deck.shuffle();
-            // dbg!(&self.deck);
+
             let mut target_chain = vec![];
             for item in chain.clone() {
                 if let Some(mut card) = item {

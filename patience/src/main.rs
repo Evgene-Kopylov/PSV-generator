@@ -12,6 +12,7 @@ use crate::patience::{give_default, Card, Deck, MySpread};
 fn main() {
     std::env::set_var("LOG_LEVEL", "info,patience=trace");
     logging_config::logging_config("LOG_LEVEL");
+    log::info!("Patience...");
 
     let start = Instant::now();
     // let suits = vec!["☐", "L", "▲", "♡", "○"];  // TODO use default()
