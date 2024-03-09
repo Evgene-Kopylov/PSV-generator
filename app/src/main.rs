@@ -41,8 +41,12 @@ impl TgContact {
             active_index: None,
         }
     }
-    fn update_suit(&mut self, index: usize, value: String) {
-        self.suits[index] = value;
+    fn update_suit<T, V>(&mut self, index: T, value: V)
+    where
+        T: Into<usize>,
+        V: Into<String>,
+    {
+        self.suits[index.into()] = value.into();
     }
     fn chain_expend(&mut self, n: usize) {
         for _ in 0..n {
