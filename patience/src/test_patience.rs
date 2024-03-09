@@ -29,7 +29,7 @@ fn test_deck_creation() {
     .collect::<Vec<String>>();
     let deck = Deck::new(suits.clone(), nominals.clone());
     assert_eq!(deck.suits.len(), suits.len());
-    assert_eq!(deck.nominals.len(), nominals.len());
+    assert_eq!(deck.ranks.len(), nominals.len());
     assert_eq!(deck.full_deck.len(), suits.len() * nominals.len());
     assert_eq!(deck.current_deck.len(), suits.len() * nominals.len());
 }
