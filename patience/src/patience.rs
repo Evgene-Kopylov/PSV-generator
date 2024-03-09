@@ -62,8 +62,6 @@ impl Card {
 
 impl Deck {
     pub fn new(suits: Vec<String>, nominals: Vec<String>) -> Self {
-        // let suits: Vec<String> = suits.iter().map(|s| s.to_string()).collect();
-        // let nominals: Vec<String> = nominals.iter().map(|n| n.to_string()).collect();
         let mut full_deck: Vec<Card> = vec![];
 
         for s in &suits {
