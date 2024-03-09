@@ -93,18 +93,6 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
     for chank in chain.chunks(btn_row_size) {
         let mut row = vec![];
         for item in chank {
-            // let mut text_card = String::new();
-            // let callback_data = format!("item_{}", &index);
-
-            // if let Some(card) = item.clone() {
-            //     text_card += "!";
-            //     let r = card.rank.unwrap_or("_".to_string());
-            //     text_card += &format!("{:?}", r).as_str();
-            // } else {
-            //     text_card += "  ";
-            // }
-            // row.push(InlineKeyboardButton::callback(text_card, callback_data));
-
             let mut card_text = String::new();
             let callback_data = format!("item_{}", &index);
 
@@ -118,17 +106,15 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
                 card_text += "  ";
             }
 
-            // if item.is_none() {
-            //     if let Some(active_index) = tg_contact.active_index {
-            //         if active_index == index {
-            //             text += "_ _";
-            //         }
-            //     }
-            // } else {
-            //     // есть значение карты
-            //     text += "Some";
-            // }
-            // dbg!(&card_text);
+            if let Some(active_index) = tg_contact.active_index {
+                if active_index == index {
+                    if card_text.starts_with("  ") {
+                        card_text = format!("_ _");
+                    } else {
+                        card_text = format!(">{}", card_text);
+                    }
+                }
+            }
             row.push(InlineKeyboardButton::callback(card_text, callback_data));
             index += 1;
         }

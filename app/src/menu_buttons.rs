@@ -150,7 +150,6 @@ async fn handle_rank_callback(
     log::trace!("rank_value = {}", rank);
 
     tg_contact.update_chain(Some(rank), None);
-    dbg!(&tg_contact.chain);
 
     dialogue
         .update(State::Menu {
