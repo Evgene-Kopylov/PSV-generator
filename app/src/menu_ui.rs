@@ -98,7 +98,7 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
         let mut row = vec![];
         for item in chank {
             let mut card_text = String::new();
-            let callback_data = format!("item_{}", &index);
+            let callback_data = format!("chain_{}", &index);
 
             if let Some(card) = item {
                 card_text += &format!(

@@ -41,8 +41,8 @@ pub async fn menu_buttons(
         data if data.starts_with("-") => {
             handle_minus_btn(bot, dialogue, q.clone(), tg_contact).await?
         }
-        data if data.starts_with("item") => {
-            handle_selected_item(bot, dialogue, q.clone(), tg_contact).await?
+        data if data.starts_with("chain") => {
+            handle_select_in_chain(bot, dialogue, q.clone(), tg_contact).await?
         }
         _ => {
             log::debug!("Не определена категория");
@@ -52,7 +52,7 @@ pub async fn menu_buttons(
     Ok(())
 }
 
-async fn handle_selected_item(
+async fn handle_select_in_chain(
     bot: Bot,
     dialogue: TeloxideDialogue,
     q: CallbackQuery,
