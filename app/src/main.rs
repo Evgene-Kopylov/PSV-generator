@@ -5,6 +5,7 @@ use teloxide::{
 };
 
 mod menu_ui;
+mod tg_contact;
 use menu_ui::start;
 
 mod menu_buttons;
@@ -15,102 +16,13 @@ use edit::edit;
 
 use dotenv::dotenv;
 use std::error::Error;
+use tg_contact::TgContact;
 
 use logging::logging_config;
 use patience_lib::patience::{give_default, Card};
 
 type TexoxideError = Box<dyn Error + Send + Sync>;
 type TeloxideDialogue = Dialogue<State, InMemStorage<State>>;
-
-#[derive(Clone)]
-pub struct TgContact {
-    suits: Vec<String>,
-    ranks: Vec<String>,
-    chain: Vec<Option<Card>>,
-    chain_index: Option<usize>,
-    suit_index: Option<usize>,
-    active_keyboard: Option<Message>,
-}
-
-impl TgContact {
-    fn new() -> Self {
-        let (suits, ranks) = give_default();
-        let mut chain = Vec::new();
-        for _ in 0..10 {
-            chain.push(None);
-        }
-        Self {
-            suits,
-            ranks,
-            chain,
-            chain_index: None,
-            suit_index: None,
-            active_keyboard: None,
-        }
-    }
-    fn update_suit<T, V>(&mut self, index: T, value: V)
-    where
-        T: Into<usize>,
-        V: Into<String>,
-    {
-        self.suits[index.into()] = value.into();
-    }
-
-    fn chain_expend<T: Into<usize>>(&mut self, n: T) {
-        for _ in 0..n.into() {
-            if self.chain.len() >= 40 {
-                return;
-            }
-            self.chain.push(None);
-        }
-    }
-
-    fn chain_reduce(&mut self) {
-        self.chain.pop();
-    }
-
-    fn update_chain<T>(&mut self, rank: Option<T>, suit: Option<T>)
-    where
-        T: Into<String> + Copy,
-    {
-        log::trace!(
-            "update chain rank = {:?}, suit = {:?}",
-            if let Some(r) = rank {
-                let _ = r.into();
-            },
-            if let Some(s) = suit {
-                let _ = s.into();
-            },
-        );
-        if let Some(index) = self.chain_index {
-            if let Some(rank) = rank {
-                if let Some(_card) = &self.chain[index] {
-                    log::trace!("есть карта!!!");
-                    if let Some(card) = self.chain.get_mut(index).unwrap() {
-                        card.update_rank(rank);
-                    }
-                } else {
-                    let card = Card::new(None, Some(rank));
-                    self.chain[index] = Some(card);
-                    log::trace!("Новая карта!")
-                }
-            }
-
-            if let Some(suit) = suit {
-                if let Some(_card) = &self.chain[index] {
-                    log::trace!("есть карта!!!");
-                    if let Some(card) = self.chain.get_mut(index).unwrap() {
-                        card.update_suit(suit);
-                    }
-                } else {
-                    let card = Card::new(Some(suit), None);
-                    self.chain[index] = Some(card);
-                    log::trace!("Новая карта!")
-                }
-            }
-        }
-    }
-}
 
 #[derive(Clone, Default)]
 pub enum State {

@@ -66,7 +66,6 @@ async fn have_patience(
     log::trace!("chain len = {}", tg_contact.clone().chain.len());
 
     let deck = Deck::new(tg_contact.suits, tg_contact.ranks);
-    // let target = vec!["4", "2○", "β☐", "2☐", "3○", "9"];
     let mut my_spread = MySpread::new(deck);
     if let Some((chain, leftover, iteration)) = my_spread.patience(tg_contact.chain, 5000).await {
         log::trace!("Сложилось. Итерация {}", iteration);
