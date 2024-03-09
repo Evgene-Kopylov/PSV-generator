@@ -2,7 +2,7 @@
 
 use std::{fmt::Display, usize};
 
-use crate::menu::ui::make_keyboard;
+use crate::{menu::ui::make_keyboard, tg_contact::Patience};
 
 use teloxide::{
     payloads::EditMessageReplyMarkupSetters,
@@ -68,11 +68,11 @@ async fn have_patience(
 
     let deck = Deck::new(tg_contact.suits.clone(), tg_contact.ranks.clone());
     let mut my_spread = MySpread::new(deck);
-    if let Some((chain, _leftover, iteration)) =
+    if let Some((chain, leftover, iteration)) =
         my_spread.patience(tg_contact.chain.clone(), 5000).await
     {
-        log::trace!("Сложилось. Итерация {}", iteration);
-        tg_contact.patience = Some(chain);
+        log::trace!("Сложилось. Итерация {}", &iteration);
+        tg_contact.patience = Some(Patience::new(chain, leftover, iteration));
         dialogue.update(State::Patience {
             tg_contact: tg_contact.clone(),
         });

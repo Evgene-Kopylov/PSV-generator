@@ -3,6 +3,23 @@ use teloxide::prelude::*;
 use patience_lib::patience::{give_default, Card};
 
 #[derive(Clone)]
+pub struct Patience {
+    pub chain: Vec<Card>,
+    pub leftover: Vec<Card>,
+    pub iteration: usize,
+}
+
+impl Patience {
+    pub fn new(chain: Vec<Card>, leftover: Vec<Card>, iteration: usize) -> Self {
+        Self {
+            chain,
+            leftover,
+            iteration,
+        }
+    }
+}
+
+#[derive(Clone)]
 pub struct TgContact {
     pub suits: Vec<String>,
     pub ranks: Vec<String>,
@@ -10,7 +27,7 @@ pub struct TgContact {
     pub chain_index: Option<usize>,
     pub suit_index: Option<usize>,
     pub menu_msg: Option<Message>,
-    pub patience: Option<Vec<Card>>,
+    pub patience: Option<Patience>,
 }
 
 impl TgContact {

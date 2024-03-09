@@ -8,7 +8,7 @@ mod patience;
 mod start;
 mod tg_contact;
 use crate::{
-    menu::{buttons::menu_buttons, edit::edit},
+    menu::{buttons::menu_buttons, edit::edit_suit},
     start::message::start as handle_start_message,
 };
 
@@ -62,7 +62,7 @@ async fn main() {
         )
         .branch(
             Update::filter_message()
-                .branch(dptree::case![State::Menu { tg_contact }].endpoint(edit)),
+                .branch(dptree::case![State::Menu { tg_contact }].endpoint(edit_suit)),
         )
         // Не к месту.
         .branch(Update::filter_message().endpoint(unexpected_text_message))

@@ -4,7 +4,7 @@ use teloxide::{prelude::Bot, requests::Requester, types::Message};
 
 use crate::{menu::buttons::update_menu, State, TeloxideDialogue, TexoxideError, TgContact};
 
-pub async fn edit(
+pub async fn edit_suit(
     bot: Bot,
     dialogue: TeloxideDialogue,
     msg: Message,
