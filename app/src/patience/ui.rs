@@ -1,31 +1,16 @@
-use teloxide::{
-    prelude::{Bot, CallbackQuery},
-    requests::Requester,
-};
+use teloxide::{prelude::Bot, requests::Requester};
 
-use crate::TeloxideDialogue;
-use crate::TexoxideError;
-use crate::{State, TgContact};
+use crate::{State, TeloxideDialogue, TexoxideError, TgContact};
 use teloxide::types::ParseMode;
 use teloxide::{
     prelude::*,
     types::{InlineKeyboardButton, InlineKeyboardMarkup},
 };
 
-use patience_lib::patience::{Deck, MySpread};
-
-// pub async fn patience(
-//     _bot: Bot,
-//     dialogue: TeloxideDialogue,
-//     _q: CallbackQuery,
-//     tg_contact: TgContact,
-// ) -> Result<(), TexoxideError> {
-//     Ok(())
-// }
-
 pub async fn spawn_patience_chain(
     bot: Bot,
     // msg: Message,
+    dialoque: TeloxideDialogue,
     tg_contact: TgContact,
 ) -> Result<Message, TexoxideError> {
     let patience = tg_contact.clone().patience.unwrap();
@@ -38,8 +23,13 @@ pub async fn spawn_patience_chain(
     let keyboard = make_keyboard(tg_contact.clone());
     let message: Message = bot
         .parse_mode(ParseMode::Html)
-        .send_message(tg_contact.menu_msg.unwrap().chat.id, text)
+        .send_message(tg_contact.clone().menu_msg.unwrap().chat.id, text)
         .reply_markup(keyboard)
+        .await?;
+    dialoque
+        .update(State::Patience {
+            tg_contact: tg_contact.clone(),
+        })
         .await?;
     Ok(message)
 }

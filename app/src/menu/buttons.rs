@@ -11,7 +11,7 @@ use teloxide::{
 };
 
 use crate::{
-    patience::patience::spawn_patience_chain, State, TeloxideDialogue, TexoxideError, TgContact,
+    patience::ui::spawn_patience_chain, State, TeloxideDialogue, TexoxideError, TgContact,
 };
 
 use patience_lib::patience::{Deck, MySpread};
@@ -76,7 +76,7 @@ async fn have_patience(
         dialogue.update(State::Patience {
             tg_contact: tg_contact.clone(),
         });
-        spawn_patience_chain(bot, tg_contact.clone()).await?;
+        spawn_patience_chain(bot, dialogue, tg_contact.clone()).await?;
     } else {
         log::trace!("Не сложилось.")
     }

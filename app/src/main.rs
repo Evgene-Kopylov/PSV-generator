@@ -5,6 +5,7 @@ use teloxide::{
 };
 
 mod patience;
+use patience::buttons::patience_solving;
 mod start;
 mod tg_contact;
 use crate::{
@@ -63,6 +64,11 @@ async fn main() {
         .branch(
             Update::filter_message()
                 .branch(dptree::case![State::Menu { tg_contact }].endpoint(edit_suit)),
+        )
+        // Patience
+        .branch(
+            Update::filter_callback_query()
+                .branch(dptree::case![State::Patience { tg_contact }].endpoint(patience_solving)),
         )
         // Не к месту.
         .branch(Update::filter_message().endpoint(unexpected_text_message))
