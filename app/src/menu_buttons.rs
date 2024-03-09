@@ -86,13 +86,19 @@ async fn update_menu(
     bot: Bot,
     dialogue: TeloxideDialogue,
     q: CallbackQuery,
-    tg_contact: TgContact,
+    mut tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
+    // сбросить активный индекс
+    tg_contact.active_index = None;
+
+    // собрать новуыю клавиатуру
     let keyboard = make_keyboard(tg_contact.clone());
 
     let old_msg = &q.message.clone().unwrap();
     let old_keyboard = old_msg.reply_markup().unwrap();
     let new_keyboard = &keyboard;
+
+    // если изменения в клавиатуре, применить
     if old_keyboard != new_keyboard {
         bot.edit_message_reply_markup(dialogue.chat_id(), q.message.unwrap().id)
             .reply_markup(keyboard)
@@ -165,31 +171,31 @@ async fn handle_suit_callback(
     let (_, suit) = split_callback_data(data);
     log::trace!("suit_value = {}", suit);
 
-    tg_contact.update_chain(None, Some(suit));
+    if tg_contact.active_index.is_some() {
+        tg_contact.update_chain(None, Some(suit));
+    } else {
+        // suit edit
+        let (_, suit) = split_callback_data(data);
+        log::trace!("suit_value = {}", suit);
+
+        if let Some(index) = get_index_by_value(tg_contact.clone().suits, suit) {
+            tg_contact.update_suit(index, "__".to_string());
+
+            let keyboard = make_keyboard(tg_contact.clone());
+
+            bot.edit_message_reply_markup(dialogue.chat_id(), q.message.clone().unwrap().id)
+                .reply_markup(keyboard)
+                .await?;
+        }
+    }
 
     dialogue
         .update(State::Menu {
             tg_contact: tg_contact.clone(),
         })
         .await?;
-
     update_menu(bot, dialogue, q, tg_contact).await?;
     Ok(())
-
-    // suit edit
-    // let (_, suit) = split_callback_data(data);
-    // log::trace!("suit_value = {}", suit);
-
-    // if let Some(index) = get_index_by_value(tg_contact.clone().suits, suit) {
-    //     tg_contact.update_suit(index, "__".to_string());
-
-    //     let keyboard = make_keyboard(tg_contact.clone());
-
-    //     bot.edit_message_reply_markup(dialogue.chat_id(), q.message.unwrap().id)
-    //         .reply_markup(keyboard)
-    //         .await?;
-    //     dialogue.update(State::Menu { tg_contact }).await?;
-    // }
 
     // Ok(())
 }

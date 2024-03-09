@@ -48,6 +48,7 @@ impl TgContact {
     {
         self.suits[index.into()] = value.into();
     }
+
     fn chain_expend<T: Into<usize>>(&mut self, n: T) {
         for _ in 0..n.into() {
             if self.chain.len() >= 40 {
