@@ -45,24 +45,29 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
 
     // дополнить список рангов до кратной числу кнопок в ряду длянны.
     let btn_row_size = 5;
-    let mut chain = tg_contact.clone().patience.unwrap();
-    // let reminder = btn_row_size - chain.len() % btn_row_size;
-    // if chain.len() % btn_row_size > 0 && reminder > 0 {
-    //     chain.extend(std::iter::repeat(" ".to_string()).take(reminder));
-    // }
+    let chain = tg_contact.clone().patience.unwrap();
 
-    // // Информационная кнопка
-    // let row = vec![InlineKeyboardButton::callback("Ранги", "info_ranks")];
-    // keyboard.push(row);
+    // Информационная кнопка
+    let row = vec![InlineKeyboardButton::callback("Ранги", "info_ranks")];
+    keyboard.push(row);
 
-    // // грид кнопок рангов
-    // for rank in chain.chunks(btn_row_size) {
-    //     let row = rank
-    //         .iter()
-    //         .map(|item| InlineKeyboardButton::callback(item, "rank_".to_owned() + &item))
-    //         .collect();
+    // грид кнопок рангов
+    let mut i = 0;
+    for _ in chain.chunks(btn_row_size) {
+        let mut row = vec![];
+        for _ in 0..btn_row_size {
+            if i == chain.len() {
+                row.push(InlineKeyboardButton::callback(" ", "empty"));
+                continue;
+            }
+            let card = chain[i].clone();
+            let text = format!("{}{}", card.rank.unwrap(), card.suit.unwrap());
+            let callback_data = format!("card_{}", i);
+            row.push(InlineKeyboardButton::callback(text, callback_data));
+            i += 1;
+        }
 
-    //     keyboard.push(row);
-    // }
+        keyboard.push(row);
+    }
     InlineKeyboardMarkup::new(keyboard)
 }
