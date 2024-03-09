@@ -57,7 +57,7 @@ async fn have_patience(
     q: CallbackQuery,
     tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
-    log::info!("Попытка сложить пасьянс.");
+    log::trace!("Попытка сложить пасьянс.");
     if tg_contact.clone().chain.len() <= 2 {
         log::debug!("цепочка слишком короткая.");
         return Ok(());
@@ -67,7 +67,11 @@ async fn have_patience(
     let deck = Deck::new(tg_contact.suits, tg_contact.ranks);
     // let target = vec!["4", "2○", "β☐", "2☐", "3○", "9"];
     let mut my_spread = MySpread::new(deck);
-    my_spread.patience(tg_contact.chain);
+    if let Some((chain, leftover, iteration)) = my_spread.patience(tg_contact.chain, 5000).await {
+        log::trace!("Сложилось. Итерация {}", iteration);
+    } else {
+        log::trace!("Не сложилось.")
+    }
 
     Ok(())
 }
@@ -205,13 +209,8 @@ async fn handle_suit_callback(
         log::trace!("suit_value = {}", suit);
 
         if let Some(index) = get_index_by_value(tg_contact.clone().suits, suit) {
-            tg_contact.update_suit(index, "__".to_string());
-
-            let keyboard = make_keyboard(tg_contact.clone());
-
-            bot.edit_message_reply_markup(dialogue.chat_id(), q.message.clone().unwrap().id)
-                .reply_markup(keyboard)
-                .await?;
+            log::trace!("получен индекс масти");
+            tg_contact.update_suit(index, "__");
         }
     }
 

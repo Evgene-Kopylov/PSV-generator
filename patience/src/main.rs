@@ -38,7 +38,7 @@ fn main() {
     chain.push(Some(Card::new(None, Some("♛"))));
     chain.push(Some(Card::new(Some("☐"), None)));
     let mut my_spread = MySpread::new(deck);
-    my_spread.patience(chain);
+    my_spread.patience(chain, 10000);
     let duration = start.elapsed();
 
     println!("Time elapsed in expensive_function() is: {:?}", duration);

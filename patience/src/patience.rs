@@ -232,8 +232,8 @@ impl MySpread {
     /// - комбинация
     /// - остаток сложения (2 карты)
     /// - успешная итерация
-    pub fn patience(&mut self, chain: Vec<Option<Card>>) -> Option<(Vec<Card>, Vec<Card>, usize)> {
-        for i in 0..MAX_ITERATIONS {
+    pub async fn patience(&mut self, chain: Vec<Option<Card>>, max_iterations: usize) -> Option<(Vec<Card>, Vec<Card>, usize)> {
+        for i in 0..max_iterations {
             self.deck.refresh_deck();
             self.deck.shuffle();
 
@@ -278,7 +278,7 @@ impl MySpread {
                 }
             }
             if let Some(leftover) = self.chain_check(target_chain.clone()) {
-                log::info!("Сложилось. Итерация {}", i + 1);
+                log::trace!("Сложилось. Итерация {}", i + 1);
                 return Some((target_chain, leftover, i + 1));
             }
         }
