@@ -7,15 +7,12 @@ use teloxide::{
 mod patience;
 mod start;
 mod tg_contact;
-use crate::{menu::buttons::menu_buttons, start::message::start as handle_start_message};
-// use menu_ui::start;
+use crate::{
+    menu::{buttons::menu_buttons, edit::edit},
+    start::message::start as handle_start_message,
+};
 
-// mod menu_buttons;
-// use menu_buttons::menu_buttons;
 mod menu;
-
-mod edit;
-use edit::edit;
 
 use dotenv::dotenv;
 use std::error::Error;
@@ -67,7 +64,6 @@ async fn main() {
             Update::filter_message()
                 .branch(dptree::case![State::Menu { tg_contact }].endpoint(edit)),
         )
-
         // Не к месту.
         .branch(Update::filter_message().endpoint(unexpected_text_message))
         .endpoint(unexpected_update);

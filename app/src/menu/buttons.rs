@@ -10,7 +10,9 @@ use teloxide::{
     requests::Requester,
 };
 
-use crate::{patience::spawn_patience_chain, State, TeloxideDialogue, TexoxideError, TgContact};
+use crate::{
+    patience::patience::spawn_patience_chain, State, TeloxideDialogue, TexoxideError, TgContact,
+};
 
 use patience_lib::patience::{Deck, MySpread};
 
