@@ -1,5 +1,7 @@
 use colored::*;
 use rand::rngs::mock::StepRng;
+use rand::seq::SliceRandom;
+
 use shuffle::irs::Irs;
 use shuffle::shuffler::Shuffler;
 
@@ -102,8 +104,30 @@ impl Deck {
         self.current_deck.pop()
     }
 
+    /// Убирает из активной колоды карту, если присутствует.
+    fn remove_if_present(&mut self, card: Card) {
+        if let Some(index) = self.current_deck.iter().position(|x| x == &card) {
+            self.current_deck.remove(index);
+        }
+    }
+
     pub fn refresh_deck(&mut self) -> () {
         self.current_deck = self.full_deck.clone();
+    }
+
+    /// Возвращает случайный элемент из Вектора.
+    ///
+    /// Применять к мастям и рангам
+    fn select_random(&self, v: &Vec<String>) -> Option<String> {
+        let mut rng = rand::thread_rng();
+
+        if let Some(random_element) = v.choose(&mut rng) {
+            println!("Random element: {}", random_element);
+            Some(random_element.to_owned())
+        } else {
+            println!("The vector is empty.");
+            None
+        }
     }
 }
 
@@ -208,6 +232,27 @@ impl MySpread {
         for i in 0..MAX_ITERATIONS {
             self.deck.refresh_deck();
             self.deck.shuffle();
+
+            // убрать целые карты из колоды
+            for i in 0..chain.len() {
+                if let Some(card) = &chain[i] {
+                    if card.rank.is_some() && card.suit.is_some() {
+                        self.deck.remove_if_present(card.clone());
+                    }
+                }
+            }
+
+            // дополнить не полные карты
+            for i in 0..chain.len() {
+                if let Some(card) = &chain[i] {
+                    if card.rank.is_some() && card.suit.is_some() {
+                    } else if card.rank.is_none() {
+                        log::info!("{}", self.deck.select_random(&self.deck.ranks).unwrap());
+                    } else if card.suit.is_none() {
+                        log::info!("{}", self.deck.select_random(&self.deck.suits).unwrap());
+                    }
+                }
+            }
 
             let mut target_chain = vec![];
             for item in chain.clone() {

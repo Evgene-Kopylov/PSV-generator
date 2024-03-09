@@ -37,7 +37,6 @@ fn main() {
     }
     chain.push(Some(Card::new(None, Some("♛"))));
     chain.push(Some(Card::new(Some("☐"), None)));
-    dbg!(&chain);
     let mut my_spread = MySpread::new(deck);
     my_spread.patience(chain);
     let duration = start.elapsed();
