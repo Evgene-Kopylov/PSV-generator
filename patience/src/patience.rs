@@ -50,6 +50,7 @@ impl Card {
             rank: rank.map(|r| r.into()),
         }
     }
+
     /// # Делает карту из стройчной ее записи
     /// например
     ///
@@ -122,10 +123,10 @@ impl Deck {
         let mut rng = rand::thread_rng();
 
         if let Some(random_element) = v.choose(&mut rng) {
-            println!("Random element: {}", random_element);
+            // log::trace!("Случайный элемент: {}", random_element);
             Some(random_element.to_owned())
         } else {
-            println!("The vector is empty.");
+            log::error!("пустой вектор");
             None
         }
     }
@@ -206,14 +207,14 @@ impl MySpread {
         false
     }
 
-    pub fn chain_check(&self, chain: Vec<Card>) -> bool {
+    pub fn chain_check(&self, chain: Vec<Card>) -> Option<Vec<Card>> {
         let mut chain = chain.clone();
         let max = chain.len();
 
         for _ in 0..max {
             let current = chain.len();
             if current <= 2 {
-                return true;
+                return Some(chain);
             }
             for j in 0..current - 2 {
                 if (&chain[j].suit == &chain[j + 2].suit) || (&chain[j].rank == &chain[j + 2].rank)
@@ -223,12 +224,15 @@ impl MySpread {
                 }
             }
         }
-        false
+        None
     }
 
-    pub fn patience(&mut self, chain: Vec<Option<Card>>) -> () {
-        // log::info!("patience!!!");
-        // println!("Patience...");
+    /// # Подобрать комбинацию и сложить Пасьянс Симпатии и Валентности
+    /// Возвращает
+    /// - комбинация
+    /// - остаток сложения (2 карты)
+    /// - успешная итерация
+    pub fn patience(&mut self, chain: Vec<Option<Card>>) -> Option<(Vec<Card>, Vec<Card>, usize)> {
         for i in 0..MAX_ITERATIONS {
             self.deck.refresh_deck();
             self.deck.shuffle();
@@ -273,8 +277,13 @@ impl MySpread {
                     target_chain.push(self.deck.pop().unwrap());
                 }
             }
-            dbg!(target_chain);
+            if let Some(leftover) = self.chain_check(target_chain.clone()) {
+                log::info!("Сложилось. Итерация {}", i + 1);
+                return Some((target_chain, leftover, i + 1));
+            }
         }
+
+        None
     }
 
     pub fn dev_patience(&mut self, target: Vec<&str>) -> () {
@@ -294,7 +303,7 @@ impl MySpread {
             }
             self.print_chain(target_chain.clone());
 
-            if self.chain_check(target_chain.clone()) {
+            if let Some(_) = self.chain_check(target_chain.clone()) {
                 self.perform_chain_operation(target_chain.clone());
                 println!("Итерация: {:}", i);
                 break;
