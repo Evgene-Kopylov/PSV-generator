@@ -1,6 +1,6 @@
 use teloxide::{
     prelude::*,
-    types::{InlineKeyboardButton, InlineKeyboardMarkup},
+    types::{InlineKeyboardButton, InlineKeyboardMarkup, MessageId, ParseMode},
 };
 
 use crate::TeloxideDialogue;
@@ -13,8 +13,9 @@ pub async fn start(
     msg: Message,
 ) -> Result<(), TexoxideError> {
     log::trace!("Start");
-    let tg_contact = TgContact::new();
-    spawn_menu(bot, msg, tg_contact.clone()).await?;
+    let mut tg_contact = TgContact::new();
+    let menu_message = spawn_menu(bot, msg, tg_contact.clone()).await?;
+    tg_contact.active_keyboard = Some(menu_message);
     dialoque.update(State::Menu { tg_contact }).await?;
     log::trace!("Произошел спавн меню.");
     Ok(())
@@ -25,15 +26,16 @@ pub async fn spawn_menu(
     bot: Bot,
     msg: Message,
     tg_contact: TgContact,
-) -> Result<(), TexoxideError> {
+) -> Result<Message, TexoxideError> {
     let text = "Пасьянс Симпатии и Валентности.";
 
     let keyboard = make_keyboard(tg_contact);
-    let _message: Message = bot
+    let message: Message = bot
+        // .parse_mode(ParseMode::Html)
         .send_message(msg.chat.id, text)
         .reply_markup(keyboard)
         .await?;
-    Ok(())
+    Ok(message)
 }
 
 /// # Разметка клавиш
@@ -71,20 +73,32 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
     }
 
     // линия мастей.
-    let row = suits
-        .iter()
-        .map(|item| InlineKeyboardButton::callback(item, "suit_".to_owned() + &item))
-        .collect();
+    let mut row = vec![];
+
+    for i in 0..tg_contact.suits.len() {
+        let suit = &tg_contact.clone().suits[i];
+        let mut text = suit.clone();
+        if let Some(index) = tg_contact.suit_index {
+            if i == index {
+                text = format!("|{}|", text);
+            }
+        }
+        row.push(InlineKeyboardButton::callback(
+            text,
+            "suit_".to_owned() + &suit,
+        ));
+    }
+
     keyboard.push(row);
 
     let chain = tg_contact.clone().chain;
 
     // Цепочка
     let mut text = String::new();
-    if tg_contact.active_index.is_some() {
+    if tg_contact.chain_index.is_some() {
         text += &format!(
             "Карта № {} из {}",
-            tg_contact.clone().active_index.unwrap() + 1,
+            tg_contact.clone().chain_index.unwrap() + 1,
             chain.len()
         );
     } else {
@@ -110,7 +124,7 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
                 card_text += "  ";
             }
 
-            if let Some(active_index) = tg_contact.active_index {
+            if let Some(active_index) = tg_contact.chain_index {
                 if active_index == index {
                     if card_text.starts_with("  ") {
                         card_text = format!("_ _");

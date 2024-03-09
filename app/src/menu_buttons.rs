@@ -6,6 +6,7 @@ use teloxide::{
     payloads::EditMessageReplyMarkupSetters,
     prelude::{Bot, CallbackQuery},
     requests::Requester,
+    types::Message,
 };
 
 use crate::{menu_ui::make_keyboard, State, TeloxideDialogue, TexoxideError, TgContact};
@@ -23,7 +24,7 @@ pub async fn menu_buttons(
 
     match callback_data {
         data if data.starts_with("rank") => {
-            handle_rank_callback(bot, dialogue, q.clone(), &data, tg_contact).await?
+            handle_rank_callback(bot, dialogue, q.clone(), &data, tg_contact).await?;
         }
         data if data.starts_with("suit") => {
             handle_suit_callback(bot, dialogue, q.clone(), &data, tg_contact).await?
@@ -87,7 +88,7 @@ async fn handle_select_in_chain(
     if parts.len() == 2 {
         let index = parts[1].parse::<usize>().unwrap();
         log::trace!("active_index = {}", &index);
-        tg_contact.active_index = Some(index);
+        tg_contact.chain_index = Some(index);
         dialogue
             .update(State::Menu {
                 tg_contact: tg_contact.clone(),
@@ -95,7 +96,7 @@ async fn handle_select_in_chain(
             .await?;
     }
 
-    update_menu(bot, dialogue, q, tg_contact).await?;
+    update_menu(bot, dialogue, q.message.unwrap(), tg_contact).await?;
     Ok(())
 }
 
@@ -107,32 +108,36 @@ async fn handle_minus_btn(
 ) -> Result<(), TexoxideError> {
     tg_contact.chain_reduce();
 
-    update_menu(bot, dialogue, q, tg_contact).await?;
+    update_menu(bot, dialogue, q.message.unwrap(), tg_contact).await?;
 
     Ok(())
 }
 
-async fn update_menu(
+pub async fn update_menu(
     bot: Bot,
     dialogue: TeloxideDialogue,
-    q: CallbackQuery,
+    // q: CallbackQuery,
+    msg: Message,
     mut tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
     // сбросить активный индекс
-    tg_contact.active_index = None;
+    tg_contact.chain_index = None;
 
     // собрать новуыю клавиатуру
     let keyboard = make_keyboard(tg_contact.clone());
 
-    let old_msg = &q.message.clone().unwrap();
-    let old_keyboard = old_msg.reply_markup().unwrap();
+    let menu_message = tg_contact.active_keyboard.clone().unwrap();
+    let old_keyboard = menu_message.reply_markup().unwrap();
     let new_keyboard = &keyboard;
 
     // если изменения в клавиатуре, применить
     if old_keyboard != new_keyboard {
-        bot.edit_message_reply_markup(dialogue.chat_id(), q.message.unwrap().id)
+        let msg_id = tg_contact.active_keyboard.unwrap().id;
+        let message = bot
+            .edit_message_reply_markup(dialogue.chat_id(), msg_id)
             .reply_markup(keyboard)
             .await?;
+        tg_contact.active_keyboard = Some(message);
         dialogue.update(State::Menu { tg_contact }).await?;
     }
     Ok(())
@@ -155,7 +160,7 @@ async fn handle_plus_btn(
 
     tg_contact.chain_expend(count);
 
-    update_menu(bot, dialogue, q, tg_contact).await?;
+    update_menu(bot, dialogue, q.message.unwrap(), tg_contact).await?;
 
     Ok(())
 }
@@ -187,7 +192,7 @@ async fn handle_rank_callback(
         })
         .await?;
 
-    update_menu(bot, dialogue, q, tg_contact).await?;
+    update_menu(bot, dialogue, q.message.unwrap(), tg_contact).await?;
     Ok(())
 }
 
@@ -201,7 +206,7 @@ async fn handle_suit_callback(
     let (_, suit) = split_callback_data(data);
     log::trace!("suit_value = {}", suit);
 
-    if tg_contact.active_index.is_some() {
+    if tg_contact.chain_index.is_some() {
         tg_contact.update_chain(None, Some(suit));
     } else {
         // suit edit
@@ -210,7 +215,8 @@ async fn handle_suit_callback(
 
         if let Some(index) = get_index_by_value(tg_contact.clone().suits, suit) {
             log::trace!("получен индекс масти");
-            tg_contact.update_suit(index, "__");
+            tg_contact.suit_index = Some(index);
+            // tg_contact.update_suit(index, "__");
         }
     }
 
@@ -219,7 +225,7 @@ async fn handle_suit_callback(
             tg_contact: tg_contact.clone(),
         })
         .await?;
-    update_menu(bot, dialogue, q, tg_contact).await?;
+    update_menu(bot, dialogue, q.message.unwrap(), tg_contact).await?;
     Ok(())
 }
 

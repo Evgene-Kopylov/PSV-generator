@@ -1,7 +1,7 @@
 use teloxide::{
     dispatching::{dialogue::InMemStorage, UpdateFilterExt},
     prelude::*,
-    types::Update,
+    types::{MessageId, ParseMode, Update},
 };
 
 mod menu_ui;
@@ -9,6 +9,9 @@ use menu_ui::start;
 
 mod menu_buttons;
 use menu_buttons::menu_buttons;
+
+mod edit;
+use edit::edit;
 
 use dotenv::dotenv;
 use std::error::Error;
@@ -24,7 +27,9 @@ pub struct TgContact {
     suits: Vec<String>,
     ranks: Vec<String>,
     chain: Vec<Option<Card>>,
-    active_index: Option<usize>,
+    chain_index: Option<usize>,
+    suit_index: Option<usize>,
+    active_keyboard: Option<Message>,
 }
 
 impl TgContact {
@@ -38,7 +43,9 @@ impl TgContact {
             suits,
             ranks,
             chain,
-            active_index: None,
+            chain_index: None,
+            suit_index: None,
+            active_keyboard: None,
         }
     }
     fn update_suit<T, V>(&mut self, index: T, value: V)
@@ -75,7 +82,7 @@ impl TgContact {
                 let _ = s.into();
             },
         );
-        if let Some(index) = self.active_index {
+        if let Some(index) = self.chain_index {
             if let Some(rank) = rank {
                 if let Some(_card) = &self.chain[index] {
                     log::trace!("есть карта!!!");
@@ -121,19 +128,26 @@ async fn main() {
 
     log::info!("Начало работы...");
 
-    let bot = Bot::from_env();
+    let bot = Bot::from_env(); //.parse_mode(ParseMode::Html);
 
     let handler = dptree::entry()
         .enter_dialogue::<Update, InMemStorage<State>, State>()
+        // Start
         .branch(Update::filter_message().branch(dptree::case![State::Start].endpoint(start)))
         .branch(
             Update::filter_callback_query()
                 .branch(dptree::case![State::Start].endpoint(unexpected_callback)),
         )
+        // Menu
         .branch(
             Update::filter_callback_query()
                 .branch(dptree::case![State::Menu { tg_contact }].endpoint(menu_buttons)),
         )
+        .branch(
+            Update::filter_message()
+                .branch(dptree::case![State::Menu { tg_contact }].endpoint(edit)),
+        )
+        // Не к месту.
         .branch(Update::filter_message().endpoint(unexpected_text_message))
         .endpoint(unexpected_update);
 
