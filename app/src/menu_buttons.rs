@@ -1,6 +1,6 @@
 #![allow(unused)] // FIXME
 
-use std::{ops::Index, usize};
+use std::{fmt::Display, ops::Index, usize};
 
 use log::trace;
 use patience_lib::patience::Card;
@@ -171,7 +171,7 @@ async fn handle_suit_callback(
     let (_, suit) = split_callback_data(data);
     log::trace!("suit_value = {}", suit);
 
-    if let Some(index) = get_index_by_value(tg_contact.clone().suits, suit.to_string()) {
+    if let Some(index) = get_index_by_value(tg_contact.clone().suits, suit) {
         tg_contact.update_suit(index, "__".to_string());
 
         let keyboard = make_keyboard(tg_contact.clone());
@@ -185,7 +185,11 @@ async fn handle_suit_callback(
     Ok(())
 }
 
-fn get_index_by_value(v: Vec<String>, value: String) -> Option<usize> {
+fn get_index_by_value<T>(v: Vec<String>, value: T) -> Option<usize>
+where
+    T: Into<String> + Display,
+{
+    let value = value.into();
     if let Some(index) = v.iter().position(|x| x == &value) {
         log::trace!("Index of {} is: {}", value, index);
         Some(index)
