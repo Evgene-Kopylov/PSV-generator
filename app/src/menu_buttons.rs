@@ -1,20 +1,14 @@
-#![allow(unused)] // FIXME
+// #![allow(unused)] // FIXME
 
-use std::{fmt::Display, ops::Index, usize};
+use std::{fmt::Display, usize};
 
-use log::trace;
-use patience_lib::patience::Card;
 use teloxide::{
-    dispatching::dialogue::GetChatId,
     payloads::EditMessageReplyMarkupSetters,
     prelude::{Bot, CallbackQuery},
     requests::Requester,
 };
 
-use crate::{
-    menu_ui::{make_keyboard, spawn_menu},
-    State, TeloxideDialogue, TexoxideError, TgContact,
-};
+use crate::{menu_ui::make_keyboard, State, TeloxideDialogue, TexoxideError, TgContact};
 
 pub async fn menu_buttons(
     bot: Bot,
@@ -197,14 +191,4 @@ where
         log::trace!("Element {} not found in the vector", value);
         None
     }
-}
-
-fn modify_by_index(mut v: Vec<String>, index: usize, new_value: String) -> Vec<String> {
-    if let Some(element) = v.iter_mut().nth(index) {
-        *element = new_value;
-        log::trace!("Modified vector: {:#?}", v);
-    } else {
-        log::trace!("Index {} is out of bounds", index);
-    }
-    v
 }
