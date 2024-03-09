@@ -38,11 +38,32 @@ pub async fn menu_buttons(
         data if data.starts_with("chain") => {
             handle_select_in_chain(bot, dialogue, q.clone(), tg_contact).await?
         }
+        data if data.starts_with(">>>") => {
+            have_patience(bot, dialogue, q.clone(), tg_contact).await?
+        }
         _ => {
             log::debug!("Не определена категория");
         }
     }
 
+    Ok(())
+}
+
+async fn have_patience(
+    bot: Bot,
+    dialogue: TeloxideDialogue,
+    q: CallbackQuery,
+    tg_contact: TgContact,
+) -> Result<(), TexoxideError> {
+    log::info!("Попытка сложить пасьянс.");
+    if tg_contact.clone().chain.len() <= 2 {
+        log::debug!("цепочка слишком короткая.");
+        return Ok(());
+    }
+    log::trace!("chain len = {}", tg_contact.clone().chain.len());
+    
+
+    
     Ok(())
 }
 
@@ -196,8 +217,6 @@ async fn handle_suit_callback(
         .await?;
     update_menu(bot, dialogue, q, tg_contact).await?;
     Ok(())
-
-    // Ok(())
 }
 
 fn get_index_by_value<T>(v: Vec<String>, value: T) -> Option<usize>

@@ -78,27 +78,27 @@ impl TgContact {
         if let Some(index) = self.active_index {
             if let Some(rank) = rank {
                 if let Some(_card) = &self.chain[index] {
-                    log::info!("есть карта!!!");
+                    log::trace!("есть карта!!!");
                     if let Some(card) = self.chain.get_mut(index).unwrap() {
                         card.update_rank(rank);
                     }
                 } else {
                     let card = Card::new("_".to_string(), rank.into());
                     self.chain[index] = Some(card);
-                    log::info!("Новая карта!")
+                    log::trace!("Новая карта!")
                 }
             }
 
             if let Some(suit) = suit {
                 if let Some(_card) = &self.chain[index] {
-                    log::info!("есть карта!!!");
+                    log::trace!("есть карта!!!");
                     if let Some(card) = self.chain.get_mut(index).unwrap() {
                         card.update_suit(suit);
                     }
                 } else {
                     let card = Card::new(suit.into(), "_".to_string());
                     self.chain[index] = Some(card);
-                    log::info!("Новая карта!")
+                    log::trace!("Новая карта!")
                 }
             }
         }
