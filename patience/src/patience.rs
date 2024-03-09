@@ -39,15 +39,19 @@ pub struct MySpread {
 }
 
 impl Card {
-    pub fn new<T>(suit: T, rank: T) -> Self
+    pub fn new<T>(suit: Option<T>, rank: Option<T>) -> Self
     where
-    T: Into<String>, {
+        T: Into<String> + Clone,
+    {
         Self {
-            suit: Some(suit.into()),
-            rank: Some(rank.into()),
+            suit: suit.map(|s| s.into()),
+            rank: rank.map(|r| r.into()),
         }
     }
-
+    /// # Делает карту из стройчной ее записи
+    /// например
+    ///
+    /// "TK" -> Card(rank: ..., suit: ...)
     pub fn from_str(s: &str) -> Option<Self> {
         let mut v: Vec<char> = s.chars().collect();
         Some(Self {
@@ -63,7 +67,6 @@ impl Card {
     pub fn update_suit<T: Into<String>>(&mut self, suit: T) {
         self.suit = Some(suit.into());
     }
-
 }
 
 impl Deck {
@@ -72,7 +75,7 @@ impl Deck {
 
         for s in &suits {
             for n in &ranks {
-                let card = Card::new(s.clone(), n.clone());
+                let card = Card::new(Some(s.clone()), Some(n.clone()));
                 full_deck.push(card.clone());
             }
         }
@@ -93,6 +96,10 @@ impl Deck {
 
     pub fn drain(&mut self, n: usize) -> Vec<Card> {
         self.current_deck.drain(..n).collect()
+    }
+
+    fn pop(&mut self) -> Option<Card> {
+        self.current_deck.pop()
     }
 
     pub fn refresh_deck(&mut self) -> () {
@@ -195,7 +202,27 @@ impl MySpread {
         false
     }
 
-    pub fn patience(&mut self, target: Vec<&str>) -> () {
+    pub fn patience(&mut self, chain: Vec<Option<Card>>) -> () {
+        // log::info!("patience!!!");
+        println!("Patience...");
+
+        for i in 0..MAX_ITERATIONS {
+            self.deck.refresh_deck();
+            self.deck.shuffle();
+            // dbg!(&self.deck);
+            let mut target_chain = vec![];
+            for item in chain.clone() {
+                if let Some(mut card) = item {
+                    target_chain.push(card);
+                } else {
+                    target_chain.push(self.deck.pop().expect("в колоде кончились карты"));
+                }
+            }
+            dbg!(target_chain);
+        }
+    }
+
+    pub fn dev_patience(&mut self, target: Vec<&str>) -> () {
         for i in 0..MAX_ITERATIONS {
             self.deck.refresh_deck();
             self.deck.shuffle();

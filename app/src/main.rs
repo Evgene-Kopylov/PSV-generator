@@ -83,7 +83,7 @@ impl TgContact {
                         card.update_rank(rank);
                     }
                 } else {
-                    let card = Card::new("_".to_string(), rank.into());
+                    let card = Card::new(None, Some(rank));
                     self.chain[index] = Some(card);
                     log::trace!("Новая карта!")
                 }
@@ -96,7 +96,7 @@ impl TgContact {
                         card.update_suit(suit);
                     }
                 } else {
-                    let card = Card::new(suit.into(), "_".to_string());
+                    let card = Card::new(Some(suit), None);
                     self.chain[index] = Some(card);
                     log::trace!("Новая карта!")
                 }

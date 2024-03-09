@@ -1,1 +1,1 @@
-pub const MAX_ITERATIONS: usize = 10000;
+pub const MAX_ITERATIONS: usize = 2;

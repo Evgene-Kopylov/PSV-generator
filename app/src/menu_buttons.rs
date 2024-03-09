@@ -10,6 +10,8 @@ use teloxide::{
 
 use crate::{menu_ui::make_keyboard, State, TeloxideDialogue, TexoxideError, TgContact};
 
+use patience_lib::patience::{Deck, MySpread};
+
 pub async fn menu_buttons(
     bot: Bot,
     dialogue: TeloxideDialogue,
@@ -61,9 +63,12 @@ async fn have_patience(
         return Ok(());
     }
     log::trace!("chain len = {}", tg_contact.clone().chain.len());
-    
 
-    
+    let deck = Deck::new(tg_contact.suits, tg_contact.ranks);
+    // let target = vec!["4", "2○", "β☐", "2☐", "3○", "9"];
+    let mut my_spread = MySpread::new(deck);
+    my_spread.patience(tg_contact.chain);
+
     Ok(())
 }
 

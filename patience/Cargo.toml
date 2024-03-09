@@ -15,3 +15,6 @@ path = "src/lib.rs"
 colored = "2.1.0"
 rand = "0.8.5"
 shuffle = "0.1.7"
+
+# local imports
+logging = { path = "../logging" }

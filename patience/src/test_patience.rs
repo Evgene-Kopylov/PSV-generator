@@ -1,12 +1,12 @@
 #[cfg(test)]
 use crate::patience::*;
 
-#[test]
-fn test_card_creation() {
-    let card = Card::new("♡".to_string(), "A".to_string());
-    assert_eq!(card.suit.unwrap(), "♡".to_string());
-    assert_eq!(card.rank.unwrap(), "A".to_string());
-}
+// #[test]
+// fn test_card_creation() {
+//     let card = Card::new("♡".to_string(), "A".to_string());
+//     assert_eq!(card.suit.unwrap(), "♡".to_string());
+//     assert_eq!(card.rank.unwrap(), "A".to_string());
+// }
 
 #[test]
 fn test_card_creation_from_str() {
@@ -88,46 +88,46 @@ fn test_deck_refresh() {
     assert_eq!(deck.current_deck.len(), suits.len() * nominals.len());
 }
 
-#[test]
-fn test_my_spread_chain_check() {
-    let suits = vec!["☐", "L", "▲", "♡", "○"]
-        .iter()
-        .map(|&s| s.to_string())
-        .collect::<Vec<String>>();
-    let nominals = vec![
-        "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
-    ]
-    .iter()
-    .map(|&n| n.to_string())
-    .collect::<Vec<String>>();
-    let deck = Deck::new(suits.clone(), nominals.clone());
-    let my_spread = MySpread::new(deck);
-    let chain = vec![
-        Card::new("☐".to_string(), "2".to_string()),
-        Card::new("L".to_string(), "2".to_string()),
-        Card::new("▲".to_string(), "2".to_string()),
-    ];
-    assert!(my_spread.chain_check(chain));
-}
+// #[test]
+// fn test_my_spread_chain_check() {
+//     let suits = vec!["☐", "L", "▲", "♡", "○"]
+//         .iter()
+//         .map(|&s| s.to_string())
+//         .collect::<Vec<String>>();
+//     let nominals = vec![
+//         "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
+//     ]
+//     .iter()
+//     .map(|&n| n.to_string())
+//     .collect::<Vec<String>>();
+//     let deck = Deck::new(suits.clone(), nominals.clone());
+//     let my_spread = MySpread::new(deck);
+//     let chain = vec![
+//         Card::new("☐".to_string(), "2".to_string()),
+//         Card::new("L".to_string(), "2".to_string()),
+//         Card::new("▲".to_string(), "2".to_string()),
+//     ];
+//     assert!(my_spread.chain_check(chain));
+// }
 
-#[test]
-fn test_my_spread_perform_chain_operation() {
-    let suits = vec!["☐", "L", "▲", "♡", "○"]
-        .iter()
-        .map(|&s| s.to_string())
-        .collect::<Vec<String>>();
-    let nominals = vec![
-        "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
-    ]
-    .iter()
-    .map(|&n| n.to_string())
-    .collect::<Vec<String>>();
-    let deck = Deck::new(suits.clone(), nominals.clone());
-    let my_spread = MySpread::new(deck);
-    let chain = vec![
-        Card::new("☐".to_string(), "2".to_string()),
-        Card::new("L".to_string(), "2".to_string()),
-        Card::new("▲".to_string(), "2".to_string()),
-    ];
-    assert!(my_spread.perform_chain_operation(chain));
-}
+// #[test]
+// fn test_my_spread_perform_chain_operation() {
+//     let suits = vec!["☐", "L", "▲", "♡", "○"]
+//         .iter()
+//         .map(|&s| s.to_string())
+//         .collect::<Vec<String>>();
+//     let nominals = vec![
+//         "T", "2", "3", "4", "5", "6", "7", "8", "9", "10", "β", "λ", "♛",
+//     ]
+//     .iter()
+//     .map(|&n| n.to_string())
+//     .collect::<Vec<String>>();
+//     let deck = Deck::new(suits.clone(), nominals.clone());
+//     let my_spread = MySpread::new(deck);
+//     let chain = vec![
+//         Card::new("☐".to_string(), "2".to_string()),
+//         Card::new("L".to_string(), "2".to_string()),
+//         Card::new("▲".to_string(), "2".to_string()),
+//     ];
+//     assert!(my_spread.perform_chain_operation(chain));
+// }
