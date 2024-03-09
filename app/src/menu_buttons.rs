@@ -6,7 +6,6 @@ use teloxide::{
     payloads::EditMessageReplyMarkupSetters,
     prelude::{Bot, CallbackQuery},
     requests::Requester,
-    types::Message,
 };
 
 use crate::{menu_ui::make_keyboard, State, TeloxideDialogue, TexoxideError, TgContact};
@@ -24,10 +23,10 @@ pub async fn menu_buttons(
 
     match callback_data {
         data if data.starts_with("rank") => {
-            handle_rank_callback(bot, dialogue, q.clone(), &data, tg_contact).await?;
+            handle_rank_callback(bot, dialogue, &data, tg_contact).await?;
         }
         data if data.starts_with("suit") => {
-            handle_suit_callback(bot, dialogue, q.clone(), &data, tg_contact).await?
+            handle_suit_callback(bot, dialogue, &data, tg_contact).await?
         }
         data if data.starts_with("info") => {
             log::trace!("Информационная кнопка");
@@ -35,9 +34,7 @@ pub async fn menu_buttons(
         data if data.starts_with("+") => {
             handle_plus_btn(bot, dialogue, q.clone(), tg_contact).await?
         }
-        data if data.starts_with("-") => {
-            handle_minus_btn(bot, dialogue, q.clone(), tg_contact).await?
-        }
+        data if data.starts_with("-") => handle_minus_btn(bot, dialogue, tg_contact).await?,
         data if data.starts_with("chain") => {
             handle_select_in_chain(bot, dialogue, q.clone(), tg_contact).await?
         }
@@ -53,9 +50,9 @@ pub async fn menu_buttons(
 }
 
 async fn have_patience(
-    bot: Bot,
-    dialogue: TeloxideDialogue,
-    q: CallbackQuery,
+    _bot: Bot,
+    _dialogue: TeloxideDialogue,
+    _q: CallbackQuery,
     tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
     log::trace!("Попытка сложить пасьянс.");
@@ -67,7 +64,7 @@ async fn have_patience(
 
     let deck = Deck::new(tg_contact.suits, tg_contact.ranks);
     let mut my_spread = MySpread::new(deck);
-    if let Some((chain, leftover, iteration)) = my_spread.patience(tg_contact.chain, 5000).await {
+    if let Some((_chain, _leftover, iteration)) = my_spread.patience(tg_contact.chain, 5000).await {
         log::trace!("Сложилось. Итерация {}", iteration);
     } else {
         log::trace!("Не сложилось.")
@@ -95,19 +92,18 @@ async fn handle_select_in_chain(
             .await?;
     }
 
-    update_menu(bot, dialogue, q.message.unwrap(), tg_contact).await?;
+    update_menu(bot, dialogue, tg_contact).await?;
     Ok(())
 }
 
 async fn handle_minus_btn(
     bot: Bot,
     dialogue: TeloxideDialogue,
-    q: CallbackQuery,
     mut tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
     tg_contact.chain_reduce();
 
-    update_menu(bot, dialogue, q.message.unwrap(), tg_contact).await?;
+    update_menu(bot, dialogue, tg_contact).await?;
 
     Ok(())
 }
@@ -115,8 +111,6 @@ async fn handle_minus_btn(
 pub async fn update_menu(
     bot: Bot,
     dialogue: TeloxideDialogue,
-    // q: CallbackQuery,
-    msg: Message,
     mut tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
     // сбросить активный индекс
@@ -159,7 +153,7 @@ async fn handle_plus_btn(
 
     tg_contact.chain_expend(count);
 
-    update_menu(bot, dialogue, q.message.unwrap(), tg_contact).await?;
+    update_menu(bot, dialogue, tg_contact).await?;
 
     Ok(())
 }
@@ -176,7 +170,6 @@ fn split_callback_data(data: &str) -> (&str, &str) {
 async fn handle_rank_callback(
     bot: Bot,
     dialogue: TeloxideDialogue,
-    q: CallbackQuery,
     data: &str,
     mut tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
@@ -191,14 +184,13 @@ async fn handle_rank_callback(
         })
         .await?;
 
-    update_menu(bot, dialogue, q.message.unwrap(), tg_contact).await?;
+    update_menu(bot, dialogue, tg_contact).await?;
     Ok(())
 }
 
 async fn handle_suit_callback(
     bot: Bot,
     dialogue: TeloxideDialogue,
-    q: CallbackQuery,
     data: &str,
     mut tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
@@ -224,7 +216,7 @@ async fn handle_suit_callback(
             tg_contact: tg_contact.clone(),
         })
         .await?;
-    update_menu(bot, dialogue, q.message.unwrap(), tg_contact).await?;
+    update_menu(bot, dialogue, tg_contact).await?;
     Ok(())
 }
 

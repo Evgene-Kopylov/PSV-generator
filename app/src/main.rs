@@ -19,7 +19,6 @@ use std::error::Error;
 use tg_contact::TgContact;
 
 use logging::logging_config;
-use patience_lib::patience::{give_default, Card};
 
 type TexoxideError = Box<dyn Error + Send + Sync>;
 type TeloxideDialogue = Dialogue<State, InMemStorage<State>>;

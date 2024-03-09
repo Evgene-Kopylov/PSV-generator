@@ -25,7 +25,7 @@ pub async fn edit(
                     tg_contact: tg_contact.clone(),
                 })
                 .await?;
-            update_menu(bot, dialogue, msg, tg_contact).await?;
+            update_menu(bot, dialogue, tg_contact).await?;
         }
     }
     Ok(())
