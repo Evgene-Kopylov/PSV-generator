@@ -73,9 +73,11 @@ async fn have_patience(
     {
         log::trace!("Сложилось. Итерация {}", &iteration);
         tg_contact.patience = Some(Patience::new(chain, leftover, iteration));
-        dialogue.update(State::Patience {
-            tg_contact: tg_contact.clone(),
-        });
+        dialogue
+            .update(State::Patience {
+                tg_contact: tg_contact.clone(),
+            })
+            .await?;
         spawn_patience_chain(bot, dialogue, tg_contact.clone()).await?;
     } else {
         log::trace!("Не сложилось.")

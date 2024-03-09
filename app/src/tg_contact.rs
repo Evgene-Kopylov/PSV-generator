@@ -1,12 +1,14 @@
-use teloxide::prelude::*;
+use teloxide::{dispatching::dialogue, prelude::*};
 
 use patience_lib::patience::{give_default, Card};
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Patience {
     pub chain: Vec<Card>,
     pub leftover: Vec<Card>,
     pub iteration: usize,
+    pub backlog: Vec<Card>,
+    pub patience_msg: Option<Message>,
 }
 
 impl Patience {
@@ -15,7 +17,21 @@ impl Patience {
             chain,
             leftover,
             iteration,
+            backlog: vec![],
+            patience_msg: None,
         }
+    }
+
+    pub fn from_chain_to_backlog(&mut self, index: usize) -> Self {
+        log::trace!("from chain to backlog");
+        // if let Some(mut patience) = self.patience.clone() {
+        if index < self.chain.len() {
+            let card = self.chain[index].clone();
+            self.chain.remove(index);
+            self.backlog.push(card.clone());
+        }
+        // }
+        self.to_owned()
     }
 }
 
@@ -26,6 +42,7 @@ pub struct TgContact {
     pub chain: Vec<Option<Card>>,
     pub chain_index: Option<usize>,
     pub suit_index: Option<usize>,
+    pub patience_index: Option<usize>,
     pub menu_msg: Option<Message>,
     pub patience: Option<Patience>,
 }
@@ -43,10 +60,12 @@ impl TgContact {
             chain,
             chain_index: None,
             suit_index: None,
+            patience_index: None,
             menu_msg: None,
             patience: None,
         }
     }
+
     pub fn update_suit<T, V>(&mut self, index: T, value: V)
     where
         T: Into<usize>,

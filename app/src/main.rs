@@ -1,3 +1,5 @@
+#![allow(unused)] // FIXME
+
 use teloxide::{
     dispatching::{dialogue::InMemStorage, UpdateFilterExt},
     prelude::*,
