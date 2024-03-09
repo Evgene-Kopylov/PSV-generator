@@ -233,6 +233,9 @@ impl MySpread {
             self.deck.refresh_deck();
             self.deck.shuffle();
 
+            // let mut active_chain = chain.clone();
+            let mut target_chain: Vec<Card> = Vec::with_capacity(chain.len());
+
             // убрать целые карты из колоды
             for i in 0..chain.len() {
                 if let Some(card) = &chain[i] {
@@ -242,24 +245,32 @@ impl MySpread {
                 }
             }
 
-            // дополнить не полные карты
             for i in 0..chain.len() {
                 if let Some(card) = &chain[i] {
+                    let mut card = card.clone();
                     if card.rank.is_some() && card.suit.is_some() {
+                        // полная карта
+                        target_chain.push(card.clone());
                     } else if card.rank.is_none() {
-                        log::info!("{}", self.deck.select_random(&self.deck.ranks).unwrap());
+                        // не полная, без ранга
+                        // дополнить
+                        card.rank = self.deck.select_random(&self.deck.ranks);
+                        // убрать из активной колоды
+                        self.deck.remove_if_present(card.clone());
+                        // добавить в целевую
+                        target_chain.push(card);
                     } else if card.suit.is_none() {
-                        log::info!("{}", self.deck.select_random(&self.deck.suits).unwrap());
+                        // не полная, без масти
+                        // дополнить
+                        card.suit = self.deck.select_random(&self.deck.suits);
+                        // убрать из активной колоды
+                        self.deck.remove_if_present(card.clone());
+                        // добавить в целевую
+                        target_chain.push(card);
                     }
-                }
-            }
-
-            let mut target_chain = vec![];
-            for item in chain.clone() {
-                if let Some(mut card) = item {
-                    target_chain.push(card);
                 } else {
-                    target_chain.push(self.deck.pop().expect("в колоде кончились карты"));
+                    // не указана, ни ранга, ни масти.
+                    target_chain.push(self.deck.pop().unwrap());
                 }
             }
             dbg!(target_chain);
