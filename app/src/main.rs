@@ -87,6 +87,19 @@ impl TgContact {
                     log::info!("Новая карта!")
                 }
             }
+
+            if let Some(suit) = suit {
+                if let Some(_card) = &self.chain[index] {
+                    log::info!("есть карта!!!");
+                    if let Some(card) = self.chain.get_mut(index).unwrap() {
+                        card.update_suit(suit);
+                    }
+                } else {
+                    let card = Card::new(suit.into(), "_".to_string());
+                    self.chain[index] = Some(card);
+                    log::info!("Новая карта!")
+                }
+            }
         }
     }
 }

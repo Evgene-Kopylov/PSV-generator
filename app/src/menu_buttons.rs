@@ -165,18 +165,33 @@ async fn handle_suit_callback(
     let (_, suit) = split_callback_data(data);
     log::trace!("suit_value = {}", suit);
 
-    if let Some(index) = get_index_by_value(tg_contact.clone().suits, suit) {
-        tg_contact.update_suit(index, "__".to_string());
+    tg_contact.update_chain(None, Some(suit));
 
-        let keyboard = make_keyboard(tg_contact.clone());
+    dialogue
+        .update(State::Menu {
+            tg_contact: tg_contact.clone(),
+        })
+        .await?;
 
-        bot.edit_message_reply_markup(dialogue.chat_id(), q.message.unwrap().id)
-            .reply_markup(keyboard)
-            .await?;
-        dialogue.update(State::Menu { tg_contact }).await?;
-    }
-
+    update_menu(bot, dialogue, q, tg_contact).await?;
     Ok(())
+
+    // suit edit
+    // let (_, suit) = split_callback_data(data);
+    // log::trace!("suit_value = {}", suit);
+
+    // if let Some(index) = get_index_by_value(tg_contact.clone().suits, suit) {
+    //     tg_contact.update_suit(index, "__".to_string());
+
+    //     let keyboard = make_keyboard(tg_contact.clone());
+
+    //     bot.edit_message_reply_markup(dialogue.chat_id(), q.message.unwrap().id)
+    //         .reply_markup(keyboard)
+    //         .await?;
+    //     dialogue.update(State::Menu { tg_contact }).await?;
+    // }
+
+    // Ok(())
 }
 
 fn get_index_by_value<T>(v: Vec<String>, value: T) -> Option<usize>

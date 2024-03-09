@@ -58,6 +58,10 @@ impl Card {
         self.rank = Some(rank.into());
     }
 
+    pub fn update_suit<T: Into<String>>(&mut self, suit: T) {
+        self.suit = Some(suit.into());
+    }
+
 }
 
 impl Deck {
