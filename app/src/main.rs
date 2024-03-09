@@ -48,8 +48,8 @@ impl TgContact {
     {
         self.suits[index.into()] = value.into();
     }
-    fn chain_expend(&mut self, n: usize) {
-        for _ in 0..n {
+    fn chain_expend<T: Into<usize>>(&mut self, n: T) {
+        for _ in 0..n.into() {
             if self.chain.len() >= 40 {
                 return;
             }
@@ -61,8 +61,19 @@ impl TgContact {
         self.chain.pop();
     }
 
-    fn update_chain(&mut self, rank: Option<&str>, suit: Option<&str>) {
-        log::trace!("update chain rank = {:?}, suit = {:?}", rank, suit);
+    fn update_chain<T>(&mut self, rank: Option<T>, suit: Option<T>)
+    where
+        T: Into<String> + Copy,
+    {
+        log::trace!(
+            "update chain rank = {:?}, suit = {:?}",
+            if let Some(r) = rank {
+                let _ = r.into();
+            },
+            if let Some(s) = suit {
+                let _ = s.into();
+            },
+        );
         if let Some(index) = self.active_index {
             if let Some(rank) = rank {
                 if let Some(_card) = &self.chain[index] {
@@ -71,7 +82,7 @@ impl TgContact {
                         card.update_rank(rank);
                     }
                 } else {
-                    let card = Card::new("_".to_string(), rank.to_string());
+                    let card = Card::new("_".to_string(), rank.into());
                     self.chain[index] = Some(card);
                     log::info!("Новая карта!")
                 }
@@ -121,7 +132,6 @@ async fn main() {
 
 async fn unexpected_text_message(bot: Bot, msg: Message) -> Result<(), TexoxideError> {
     let text = "¯\\_(ツ)_/¯";
-    // log::warn!("Сообщение не обработано {:#?}", msg);
     bot.send_message(msg.chat.id, text).await?;
     Ok(())
 }
@@ -132,7 +142,6 @@ async fn unexpected_callback(
     _q: CallbackQuery,
 ) -> Result<(), TexoxideError> {
     let text = "(ᵔ.ᵔ) /start ?";
-    // log::warn!("Не ожиданныйы коллбек {:#?}", q);
     bot.send_message(dialogue.chat_id(), text).await?;
     Ok(())
 }
