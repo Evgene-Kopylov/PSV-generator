@@ -39,10 +39,12 @@ pub struct MySpread {
 }
 
 impl Card {
-    pub fn new(suit: String, rank: String) -> Self {
+    pub fn new<T>(suit: T, rank: T) -> Self
+    where
+    T: Into<String>, {
         Self {
-            suit: Some(suit),
-            rank: Some(rank),
+            suit: Some(suit.into()),
+            rank: Some(rank.into()),
         }
     }
 
