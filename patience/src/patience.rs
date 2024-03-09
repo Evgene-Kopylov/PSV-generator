@@ -53,6 +53,11 @@ impl Card {
             rank: Some(v.iter().collect()),
         })
     }
+
+    pub fn update_rank<T: Into<String>>(&mut self, rank: T) {
+        self.rank = Some(rank.into());
+    }
+
 }
 
 impl Deck {
