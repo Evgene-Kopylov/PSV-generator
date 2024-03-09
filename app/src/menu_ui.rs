@@ -80,7 +80,12 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
     let chain = tg_contact.clone().chain;
 
     // Цепочка
-    let text = format!("Цепочка {} карт", chain.len());
+    let mut text = String::new();
+    if tg_contact.active_index.is_some() {
+        text += &format!("index {}", tg_contact.clone().active_index.unwrap());
+    } else {
+        text += &format!("Цепочка {} карт", chain.len());
+    }
     let row = vec![InlineKeyboardButton::callback(text, "info_chain")];
     keyboard.push(row);
     // грид цепочки
@@ -88,19 +93,43 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
     for chank in chain.chunks(btn_row_size) {
         let mut row = vec![];
         for item in chank {
-            let mut text = "  ";
+            // let mut text_card = String::new();
+            // let callback_data = format!("item_{}", &index);
+
+            // if let Some(card) = item.clone() {
+            //     text_card += "!";
+            //     let r = card.rank.unwrap_or("_".to_string());
+            //     text_card += &format!("{:?}", r).as_str();
+            // } else {
+            //     text_card += "  ";
+            // }
+            // row.push(InlineKeyboardButton::callback(text_card, callback_data));
+
+            let mut card_text = String::new();
             let callback_data = format!("item_{}", &index);
-            if item.is_none() {
-                if let Some(active_index) = tg_contact.active_index {
-                    if active_index == index {
-                        text = "_ _";
-                    }
-                }
+
+            if let Some(card) = item {
+                card_text += &format!(
+                    "{}{}",
+                    card.clone().rank.unwrap_or("_".to_string()),
+                    card.clone().suit.unwrap_or("_".to_string()),
+                );
             } else {
-                // есть значение карты
-                text = "Some";
+                card_text += "  ";
             }
-            row.push(InlineKeyboardButton::callback(text, callback_data));
+
+            // if item.is_none() {
+            //     if let Some(active_index) = tg_contact.active_index {
+            //         if active_index == index {
+            //             text += "_ _";
+            //         }
+            //     }
+            // } else {
+            //     // есть значение карты
+            //     text += "Some";
+            // }
+            // dbg!(&card_text);
+            row.push(InlineKeyboardButton::callback(card_text, callback_data));
             index += 1;
         }
 
