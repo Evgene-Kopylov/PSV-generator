@@ -126,7 +126,7 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
         for _ in 1..btn_row_size {
             if row.len() < btn_row_size {
                 // ☠   ⌧  ⌲  ⍁   ╳  ＞＜   ＞∘＜   ＞○＜"
-                let text = "╳";
+                let text = "∘";
                 let callback_data = "infeal_chain";
                 row.push(InlineKeyboardButton::callback(text, callback_data))
             }
