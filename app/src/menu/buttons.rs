@@ -20,7 +20,7 @@ pub async fn menu_buttons(
     bot: Bot,
     dialogue: TeloxideDialogue,
     q: CallbackQuery,
-    tg_contact: TgContact,
+    mut tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
     log::trace!("menu_buttons");
     let callback_data = q.clone().data.unwrap_or_default();
@@ -33,7 +33,7 @@ pub async fn menu_buttons(
             handle_suit_callback(bot, dialogue, &data, tg_contact).await?
         }
         data if data.starts_with("info") => {
-            log::trace!("Информационная кнопка");
+            hendle_info(bot, dialogue, q, tg_contact).await?;
         }
         data if data.starts_with("+") => {
             handle_plus_btn(bot, dialogue, q.clone(), tg_contact).await?
@@ -50,6 +50,23 @@ pub async fn menu_buttons(
         }
     }
 
+    Ok(())
+}
+
+async fn hendle_info(
+    bot: Bot,
+    dialogue: TeloxideDialogue,
+    _q: CallbackQuery,
+    mut tg_contact: TgContact,
+) -> Result<(), TexoxideError> {
+    tg_contact.chain_index = None;
+    dialogue
+        .update(State::Menu {
+            tg_contact: tg_contact.clone(),
+        })
+        .await?;
+    update_menu(bot, dialogue, tg_contact).await?;
+    log::trace!("Информационная кнопка");
     Ok(())
 }
 
@@ -126,8 +143,8 @@ pub async fn update_menu(
     dialogue: TeloxideDialogue,
     mut tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
-    // сбросить активный индекс
-    tg_contact.chain_index = None;
+    // // сбросить активный индекс
+    // tg_contact.chain_index = None;
 
     // собрать новуыю клавиатуру
     let keyboard = make_keyboard(tg_contact.clone());
