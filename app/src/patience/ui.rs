@@ -13,12 +13,14 @@ pub async fn spawn_patience_chain(
     dialoque: TeloxideDialogue,
     mut tg_contact: TgContact,
 ) -> Result<Message, TexoxideError> {
+    log::trace!("спавн цепочки");
     let mut patience = tg_contact.clone().patience.unwrap();
-    let target = "< ... >";
+    // dbg!(&patience.target);
+    let target = patience.target_string();
     let chain_text = "< ... >";
     let rest = "< ... >";
     let text = format!(
-        "### Сведение\
+        "### Сведение \
         \n\
         \nЦелевая: {}\
         \nПопытка: {}\

@@ -87,7 +87,12 @@ async fn have_patience(
         my_spread.patience(tg_contact.chain.clone(), 5000).await
     {
         log::trace!("Сложилось. Итерация {}", &iteration);
-        tg_contact.patience = Some(Patience::new(chain, leftover, iteration));
+        tg_contact.patience = Some(Patience::new(
+            tg_contact.clone().chain,
+            chain,
+            leftover,
+            iteration,
+        ));
         dialogue
             .update(State::Patience {
                 tg_contact: tg_contact.clone(),

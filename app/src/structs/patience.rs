@@ -4,6 +4,7 @@ use patience_lib::patience::Card;
 
 #[derive(Debug, Clone)]
 pub struct Patience {
+    pub target: Vec<Option<Card>>,
     pub chain: Vec<Card>,
     pub leftover: Vec<Card>,
     pub iteration: usize,
@@ -12,8 +13,14 @@ pub struct Patience {
 }
 
 impl Patience {
-    pub fn new(chain: Vec<Card>, leftover: Vec<Card>, iteration: usize) -> Self {
+    pub fn new(
+        target: Vec<Option<Card>>,
+        chain: Vec<Card>,
+        leftover: Vec<Card>,
+        iteration: usize,
+    ) -> Self {
         Self {
+            target,
             chain,
             leftover,
             iteration,
@@ -31,5 +38,24 @@ impl Patience {
             self.backlog.push(card.clone());
         }
         self.to_owned()
+    }
+
+    pub fn target_string(&self) -> String {
+        log::trace!("get target string representation");
+        self.target
+            .iter()
+            .map(|c| {
+                if let Some(card) = c {
+                    format!(
+                        "{}{}",
+                        card.clone().rank.unwrap_or("_".to_string()),
+                        card.clone().suit.unwrap_or("_".to_string()),
+                    )
+                } else {
+                    "__".to_string()
+                }
+            })
+            .collect::<Vec<_>>()
+            .join("   ")
     }
 }
