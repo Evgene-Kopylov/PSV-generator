@@ -17,16 +17,19 @@ pub async fn spawn_patience_chain(
     let mut patience = tg_contact.clone().patience.unwrap();
     // dbg!(&patience.target);
     let target = patience.target_string();
-    let chain_text = "< ... >";
-    let rest = "< ... >";
+    let chain_text = patience.chain_to_string();
+    let rest = patience.leftover_to_string();
     let text = format!(
-        "### Сведение \
+        "### Цепочка\
         \n\
-        \nЦелевая: {}\
+        \nЦелевая:\
+        \n{}\
         \nПопытка: {}\
-        \nКомбинация: {}\
+        \nКомбинация:\
+        \n{}\
         \nОстаток: {}\
-        \n",
+        \n\
+        \n### Сведение",
         target, &patience.iteration, chain_text, rest
     );
 

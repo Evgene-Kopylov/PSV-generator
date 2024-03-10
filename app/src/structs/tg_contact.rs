@@ -1,6 +1,6 @@
 use teloxide::prelude::*;
 
-use patience_lib::patience::{self, give_default, Card};
+use patience_lib::patience::{give_default, Card};
 
 use super::patience::Patience;
 
