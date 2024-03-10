@@ -1,4 +1,4 @@
-use teloxide::{dispatching::dialogue, prelude::*};
+use teloxide::prelude::*;
 
 use patience_lib::patience::{give_default, Card};
 

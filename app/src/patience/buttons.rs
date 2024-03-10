@@ -1,18 +1,8 @@
-use teloxide::{
-    prelude::{Bot, CallbackQuery},
-    requests::Requester,
-};
+use teloxide::prelude::{Bot, CallbackQuery};
 
 use crate::TexoxideError;
 use crate::{patience::ui::update_patience, TeloxideDialogue};
 use crate::{State, TgContact};
-use teloxide::types::ParseMode;
-use teloxide::{
-    prelude::*,
-    types::{InlineKeyboardButton, InlineKeyboardMarkup},
-};
-
-use patience_lib::patience::{Card, Deck, MySpread};
 
 /// Обработка кнопок на стадии сведения пасьянса.
 pub async fn patience_solving(

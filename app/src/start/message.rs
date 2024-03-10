@@ -1,8 +1,5 @@
 /// стартовое сообщение
-use teloxide::{
-    prelude::*,
-    types::{InlineKeyboardButton, InlineKeyboardMarkup},
-};
+use teloxide::prelude::*;
 
 use crate::TexoxideError;
 use crate::{menu::ui::spawn_menu, TeloxideDialogue};

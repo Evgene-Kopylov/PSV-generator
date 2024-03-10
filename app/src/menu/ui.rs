@@ -3,9 +3,8 @@ use teloxide::{
     types::{InlineKeyboardButton, InlineKeyboardMarkup},
 };
 
-use crate::TeloxideDialogue;
 use crate::TexoxideError;
-use crate::{State, TgContact};
+use crate::TgContact;
 
 /// # спавн меню
 pub async fn spawn_menu(
