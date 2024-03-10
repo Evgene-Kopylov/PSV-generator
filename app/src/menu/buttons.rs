@@ -2,7 +2,7 @@
 
 use std::{fmt::Display, usize};
 
-use crate::{menu::ui::make_keyboard, tg_contact::Patience};
+use crate::{menu::ui::make_keyboard, structs::patience::Patience};
 
 use teloxide::{
     payloads::EditMessageReplyMarkupSetters,

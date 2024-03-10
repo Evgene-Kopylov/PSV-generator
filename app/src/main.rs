@@ -1,5 +1,6 @@
-#![allow(unused)] // FIXME
+// #![allow(unused)] // FIXME
 
+use structs::tg_contact::TgContact;
 use teloxide::{
     dispatching::{dialogue::InMemStorage, UpdateFilterExt},
     prelude::*,
@@ -9,7 +10,7 @@ use teloxide::{
 mod patience;
 use patience::buttons::patience_solving;
 mod start;
-mod tg_contact;
+mod structs;
 use crate::{
     menu::{buttons::menu_buttons, edit::edit_suit},
     start::message::start as handle_start_message,
@@ -19,7 +20,6 @@ mod menu;
 
 use dotenv::dotenv;
 use std::error::Error;
-use tg_contact::TgContact;
 
 use logging::logging_config;
 
