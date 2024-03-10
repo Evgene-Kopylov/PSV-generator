@@ -35,10 +35,8 @@ pub async fn menu_buttons(
         data if data.starts_with("info") => {
             hendle_info(bot, dialogue, q, tg_contact).await?;
         }
-        data if data.starts_with("+") => {
-            handle_plus_btn(bot, dialogue, q.clone(), tg_contact).await?
-        }
-        data if data.starts_with("-") => handle_minus_btn(bot, dialogue, tg_contact).await?,
+        data if data.starts_with("+") => handle_plus(bot, dialogue, q.clone(), tg_contact).await?,
+        data if data.starts_with("-") => handle_minus(bot, dialogue, tg_contact).await?,
         data if data.starts_with("chain") => {
             handle_select_in_chain(bot, dialogue, q.clone(), tg_contact).await?
         }
@@ -126,7 +124,7 @@ async fn handle_select_in_chain(
     Ok(())
 }
 
-async fn handle_minus_btn(
+async fn handle_minus(
     bot: Bot,
     dialogue: TeloxideDialogue,
     mut tg_contact: TgContact,
@@ -166,7 +164,7 @@ pub async fn update_menu(
     Ok(())
 }
 
-async fn handle_plus_btn(
+async fn handle_plus(
     bot: Bot,
     dialogue: TeloxideDialogue,
     q: CallbackQuery,

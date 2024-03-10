@@ -112,9 +112,9 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
             if let Some(active_index) = tg_contact.chain_index {
                 if active_index == index {
                     if card_text.starts_with("  ") {
-                        card_text = format!("_ _");
+                        card_text = format!("|_ _|");
                     } else {
-                        card_text = format!(">{}", card_text);
+                        card_text = format!("|{}|", card_text);
                     }
                 }
             }
