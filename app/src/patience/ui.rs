@@ -14,15 +14,23 @@ pub async fn spawn_patience_chain(
     mut tg_contact: TgContact,
 ) -> Result<Message, TexoxideError> {
     let mut patience = tg_contact.clone().patience.unwrap();
-
+    let target = "< ... >";
+    let chain_text = "< ... >";
+    let rest = "< ... >";
     let text = format!(
-        "<span class='tg-spoiler'>{}</span>\n### Сведение",
-        patience.iteration
+        "### Сведение\
+        \n\
+        \nЦелевая: {}\
+        \nПопытка: {}\
+        \nКомбинация: {}\
+        \nОстаток: {}\
+        \n",
+        target, &patience.iteration, chain_text, rest
     );
 
     let keyboard = make_keyboard(tg_contact.clone());
     let message: Message = bot
-        .parse_mode(ParseMode::Html)
+        // .parse_mode(ParseMode::MarkdownV2)
         .send_message(tg_contact.clone().menu_msg.unwrap().chat.id, text)
         .reply_markup(keyboard)
         .await?;
