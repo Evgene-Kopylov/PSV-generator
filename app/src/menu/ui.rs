@@ -6,8 +6,6 @@ use teloxide::{
 use crate::TexoxideError;
 use crate::TgContact;
 
-pub const BTN_PLACEHOLDER: &str = "∘";
-
 /// # спавн меню
 pub async fn spawn_menu(
     bot: Bot,
@@ -128,7 +126,7 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
         for _ in 1..btn_row_size {
             if row.len() < btn_row_size {
                 // ☠   ⌧  ⌲  ⍁   ╳  ＞＜   ＞∘＜   ＞○＜"
-                let text = BTN_PLACEHOLDER;
+                let text = "∘";
                 let callback_data = "empty";
                 row.push(InlineKeyboardButton::callback(text, callback_data))
             }
