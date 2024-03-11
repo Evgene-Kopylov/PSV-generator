@@ -87,15 +87,16 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
 
     // кнопки управления при сведении
     let mut row = vec![];
-    // кнопка отмены предыдущего действия
-    let text = "↶";
-    let callback_data = "abort_drop";
-    let btn = InlineKeyboardButton::callback(text, callback_data);
-    row.push(btn);
 
     // кнопка возврата в меню
     let text = "<<<";
     let callback_data = "back_to_menu";
+    let btn = InlineKeyboardButton::callback(text, callback_data);
+    row.push(btn);
+
+    // кнопка отмены предыдущего действия
+    let text = "↶";
+    let callback_data = "abort_drop";
     let btn = InlineKeyboardButton::callback(text, callback_data);
     row.push(btn);
 
