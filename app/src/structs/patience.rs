@@ -68,6 +68,17 @@ impl Patience {
         }
     }
 
+    pub fn abort_drop(&mut self) {
+        log::trace!("убрать последний индекс из dropout_order");
+        if let Some(index) = self.dropout_order.pop() {
+            if let Some(card) = self._chain_base.get(index) {
+                if !self.chain.contains(card) {
+                    self.chain.push(card.clone());
+                }
+            }
+        }
+    }
+
     fn _vec_to_string(&self, vec: Vec<Card>) -> String {
         vec.iter()
             .map(|card| {

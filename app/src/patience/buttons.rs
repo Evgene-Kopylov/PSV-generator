@@ -18,6 +18,9 @@ pub async fn patience_solving(
         data if data.starts_with("card") => {
             hendle_card_button(bot, dialogue, &data, tg_contact).await?;
         }
+        data if data.starts_with("abort") => {
+            hendle_abort_last_action(bot, dialogue, &data, tg_contact).await?;
+        }
         _ => {
             log::debug!("Не определена категория");
         }
@@ -49,6 +52,29 @@ async fn hendle_card_button(
                 .await?;
             update_patience(bot, dialogue, tg_contact).await?;
         }
+    }
+
+    Ok(())
+}
+
+async fn hendle_abort_last_action(
+    bot: Bot,
+    dialogue: TeloxideDialogue,
+    data: &str,
+    mut tg_contact: TgContact,
+) -> Result<(), TexoxideError> {
+    log::trace!("abort btn");
+
+    if let Some(mut patience) = tg_contact.patience.clone() {
+        patience.abort_drop();
+        tg_contact.patience = Some(patience);
+
+        dialogue
+            .update(State::Patience {
+                tg_contact: tg_contact.clone(),
+            })
+            .await?;
+        update_patience(bot, dialogue, tg_contact).await?;
     }
 
     Ok(())

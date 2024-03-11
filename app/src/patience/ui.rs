@@ -85,6 +85,28 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
         keyboard.push(row);
     }
 
+    // кнопки управления при сведении
+    let mut row = vec![];
+    // кнопка отмены предыдущего действия
+    let text = "↶";
+    let callback_data = "abort_drop";
+    let btn = InlineKeyboardButton::callback(text, callback_data);
+    row.push(btn);
+
+    // кнопка возврата в меню
+    let text = "<<<";
+    let callback_data = "back_to_menu";
+    let btn = InlineKeyboardButton::callback(text, callback_data);
+    row.push(btn);
+
+    // кнопка ОК
+    let text = "OK";
+    let callback_data = "ok";
+    let btn = InlineKeyboardButton::callback(text, callback_data);
+    row.push(btn);
+
+    keyboard.push(row);
+
     InlineKeyboardMarkup::new(keyboard)
 }
 
@@ -104,10 +126,11 @@ pub async fn update_patience(
     let old_keyboard = msg.reply_markup().unwrap();
     let new_keyboard = &keyboard;
 
-    let new_text = make_text(tg_contact.clone());
+    let old_text = msg.text().clone().unwrap_or("...");
+    let new_text = make_text(tg_contact.clone()).trim().to_string();
 
     // если изменения в клавиатуре, применить
-    if old_keyboard != new_keyboard {
+    if old_keyboard != new_keyboard || old_text != new_text {
         log::trace!("New keyboard");
         let msg_id = msg.id;
         msg = bot
