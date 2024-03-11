@@ -1,6 +1,6 @@
 // #![allow(unused)] // FIXME
 
-use std::{fmt::Display, usize};
+use std::{fmt::Display, ops::Index, usize};
 
 use crate::{menu::ui::make_keyboard, structs::patience::Patience};
 
@@ -33,6 +33,9 @@ pub async fn menu_buttons(
             }
             data if data.starts_with("suit") => {
                 handle_suit_callback(bot, dialogue, &data, tg_contact).await?
+            }
+            data if data.starts_with("clean") => {
+                handle_clean(bot, dialogue, &data, tg_contact).await?
             }
             data if data.starts_with("info") => {
                 hendle_info(bot, dialogue, q, tg_contact).await?;
@@ -270,6 +273,30 @@ async fn handle_suit_callback(
         })
         .await?;
     update_menu(bot, dialogue, tg_contact).await?;
+    Ok(())
+}
+
+async fn handle_clean(
+    bot: Bot,
+    dialogue: TeloxideDialogue,
+    data: &str,
+    mut tg_contact: TgContact,
+) -> Result<(), TexoxideError> {
+    log::trace!("data = {}", &data);
+
+    if let Some(suit_index) = tg_contact.suit_index {
+        if suit_index < tg_contact.suits.len() as usize {
+            tg_contact.suits.remove(suit_index);
+            tg_contact.suit_index = None;
+            dialogue
+                .update(State::Menu {
+                    tg_contact: tg_contact.clone(),
+                })
+                .await?;
+            update_menu(bot, dialogue, tg_contact).await?;
+        }
+    }
+
     Ok(())
 }
 

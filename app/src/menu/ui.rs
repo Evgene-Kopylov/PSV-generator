@@ -51,12 +51,6 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
     let row = vec![InlineKeyboardButton::callback("Масти", "info_suits")];
     keyboard.push(row);
 
-    // Дополнить список мастей до кратной числу кнопок в ряду длинны.
-    let mut suits = tg_contact.clone().suits;
-    if suits.len() < btn_row_size {
-        suits.extend(std::iter::repeat(" ".to_string()).take(btn_row_size - suits.len()));
-    }
-
     // линия мастей.
     let mut row = vec![];
 
@@ -72,6 +66,15 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
             text,
             "suit_".to_owned() + &suit,
         ));
+    }
+
+    // дополнить линию мастей
+    for _ in 1..btn_row_size {
+        if row.len() < btn_row_size {
+            let text = " ";
+            let callback_data = format!("suit_{}", row.len());
+            row.push(InlineKeyboardButton::callback(text, callback_data))
+        }
     }
 
     keyboard.push(row);
@@ -137,6 +140,7 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
 
     // Задать целевую последовательность и сложить пасьянс.
     let row = vec![
+        InlineKeyboardButton::callback("🪣", "clean_suit"),
         InlineKeyboardButton::callback("➖", "-"),
         InlineKeyboardButton::callback("➕", "+1"),
         InlineKeyboardButton::callback("➕➕", "+5"),
