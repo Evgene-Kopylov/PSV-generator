@@ -56,6 +56,10 @@ impl Patience {
         );
 
         if let Some(base_index) = self._chain_base.iter().position(|x| x == &card) {
+            if self.chain.len() == 2 {
+                log::trace!("остаток цепочки 2. выбывание прекращено.");
+                return;
+            }
             self.dropout_order.push(base_index);
 
             if let Some(chain_index) = self.chain.iter().position(|x| x == &card) {
@@ -91,7 +95,7 @@ impl Patience {
         for i in &self.dropout_order {
             if let Some(card) = self._chain_base.clone().get(*i) {
                 s += &format!(
-                    "  {}{}",
+                    "{}{}  ",
                     card.clone().rank.unwrap_or("_".to_string()),
                     card.clone().suit.unwrap_or("_".to_string()),
                 );
