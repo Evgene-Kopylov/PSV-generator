@@ -36,15 +36,20 @@ async fn hendle_card_button(
     let parts: Vec<&str> = data.split('_').collect();
     let index = parts[1].parse::<usize>().unwrap();
     log::trace!("index = {}", index);
-    let mut patience = tg_contact.patience.clone().unwrap();
-    patience = patience.from_chain_to_backlog(index);
-    tg_contact.patience = Some(patience);
 
-    dialogue
-        .update(State::Patience {
-            tg_contact: tg_contact.clone(),
-        })
-        .await?;
-    update_patience(bot, dialogue, tg_contact).await?;
+    if let Some(mut patience) = tg_contact.patience.clone() {
+        if let Some(card) = patience.chain.get(index) {
+            patience.drop_card(card.clone());
+            tg_contact.patience = Some(patience);
+
+            dialogue
+                .update(State::Patience {
+                    tg_contact: tg_contact.clone(),
+                })
+                .await?;
+            update_patience(bot, dialogue, tg_contact).await?;
+        }
+    }
+
     Ok(())
 }

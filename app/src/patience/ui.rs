@@ -1,5 +1,6 @@
 use teloxide::{prelude::Bot, requests::Requester};
 
+use crate::start::message;
 use crate::{State, TeloxideDialogue, TexoxideError, TgContact};
 use teloxide::types::ParseMode;
 use teloxide::{
@@ -7,18 +8,14 @@ use teloxide::{
     types::{InlineKeyboardButton, InlineKeyboardMarkup},
 };
 
-pub async fn spawn_patience_chain(
-    bot: Bot,
-    // msg: Message,
-    dialoque: TeloxideDialogue,
-    mut tg_contact: TgContact,
-) -> Result<Message, TexoxideError> {
-    log::trace!("спавн цепочки");
+fn make_text(mut tg_contact: TgContact) -> String {
+    log::trace!("делаю текст");
     let mut patience = tg_contact.clone().patience.unwrap();
     // dbg!(&patience.target);
     let target = patience.target_string();
     let chain_text = patience.chain_to_string();
     let rest = patience.leftover_to_string();
+    let dropout_text = patience.dropout_to_string();
     let text = format!(
         "### Цепочка\
         \n\
@@ -29,9 +26,24 @@ pub async fn spawn_patience_chain(
         \n{}\
         \nОстаток: {}\
         \n\
-        \n### Сведение",
-        target, &patience.iteration, chain_text, rest
+        \n### Сведение\
+        \n\
+        \n{}",
+        target, &patience.iteration, chain_text, rest, dropout_text
     );
+    text
+}
+
+pub async fn spawn_patience_chain(
+    bot: Bot,
+    // msg: Message,
+    dialoque: TeloxideDialogue,
+    mut tg_contact: TgContact,
+) -> Result<Message, TexoxideError> {
+    log::trace!("спавн цепочки");
+    let mut patience = tg_contact.clone().patience.unwrap();
+    // dbg!(&patience.target);
+    let text = make_text(tg_contact.clone());
 
     let keyboard = make_keyboard(tg_contact.clone());
     let message: Message = bot
@@ -85,28 +97,34 @@ pub async fn update_patience(
     mut tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
     log::trace!("Обновляю расклад");
-    // сбросить активный индекс
-    tg_contact.patience_index = None;
 
     // собрать новуыю клавиатуру
     let keyboard = make_keyboard(tg_contact.clone());
 
     let mut patience = tg_contact.patience.clone().unwrap();
-    let msg = patience.patience_msg.unwrap();
+    let mut msg = patience.patience_msg.unwrap();
+
     let old_keyboard = msg.reply_markup().unwrap();
     let new_keyboard = &keyboard;
+
+    let new_text = make_text(tg_contact.clone());
 
     // если изменения в клавиатуре, применить
     if old_keyboard != new_keyboard {
         log::trace!("New keyboard");
         let msg_id = msg.id;
-        let message = bot
-            .edit_message_reply_markup(dialogue.chat_id(), msg_id)
+        msg = bot
+            .edit_message_text(dialogue.chat_id(), msg_id, new_text)
             .reply_markup(keyboard)
             .await?;
-        patience.patience_msg = Some(message);
-        tg_contact.patience = Some(patience);
-        dialogue.update(State::Patience { tg_contact }).await?;
+        patience.patience_msg = Some(msg.clone());
+        tg_contact.patience = Some(patience.clone());
+        dialogue
+            .update(State::Patience {
+                tg_contact: tg_contact.clone(),
+            })
+            .await?;
     }
+
     Ok(())
 }

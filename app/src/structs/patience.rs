@@ -10,6 +10,9 @@ pub struct Patience {
     /// сложившаяся цепочка. полная
     pub chain: Vec<Card>,
 
+    /// цепочка без изменений
+    pub _chain_base: Vec<Card>,
+
     /// остаток сложения
     pub leftover: Vec<Card>,
 
@@ -18,6 +21,9 @@ pub struct Patience {
 
     /// карты в полядке выбывания
     pub backlog: Vec<Card>,
+
+    /// порядок сложения карт пользователем
+    pub dropout_order: Vec<usize>,
 
     /// сообщение с гридом кнопок
     pub patience_msg: Option<Message>,
@@ -32,23 +38,30 @@ impl Patience {
     ) -> Self {
         Self {
             target,
-            chain,
+            chain: chain.clone(),
+            _chain_base: chain,
             leftover,
             iteration,
             backlog: vec![],
+            dropout_order: vec![],
             patience_msg: None,
         }
     }
 
-    /// Перемещает карту по индексу из расклада в беклог.
-    pub fn from_chain_to_backlog(&mut self, index: usize) -> Self {
-        log::trace!("from chain to backlog");
-        if index < self.chain.len() {
-            let card = self.chain[index].clone();
-            self.chain.remove(index);
-            self.backlog.push(card.clone());
+    pub fn drop_card(&mut self, card: Card) {
+        log::trace!(
+            "выбывание карты {}{}",
+            &card.rank.clone().unwrap(),
+            &card.suit.clone().unwrap()
+        );
+
+        if let Some(base_index) = self._chain_base.iter().position(|x| x == &card) {
+            self.dropout_order.push(base_index);
+
+            if let Some(chain_index) = self.chain.iter().position(|x| x == &card) {
+                self.chain.remove(chain_index);
+            }
         }
-        self.to_owned()
     }
 
     fn _vec_to_string(&self, vec: Vec<Card>) -> String {
@@ -65,11 +78,29 @@ impl Patience {
     }
 
     pub fn chain_to_string(&self) -> String {
-        self._vec_to_string(self.chain.clone())
+        self._vec_to_string(self._chain_base.clone())
     }
 
     pub fn leftover_to_string(&self) -> String {
         self._vec_to_string(self.leftover.clone())
+    }
+
+    /// Строка с картами в порядке сложения пользователем
+    pub fn dropout_to_string(&self) -> String {
+        let mut s = String::new();
+        for i in &self.dropout_order {
+            if let Some(card) = self._chain_base.clone().get(*i) {
+                s += &format!(
+                    "  {}{}",
+                    card.clone().rank.unwrap_or("_".to_string()),
+                    card.clone().suit.unwrap_or("_".to_string()),
+                );
+            } else {
+                log::error!("Ошибка при записи порядка выбывания.");
+            }
+        }
+        log::trace!("выбывание: {}", &s);
+        s
     }
 
     pub fn target_string(&self) -> String {
