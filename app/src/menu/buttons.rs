@@ -25,26 +25,30 @@ pub async fn menu_buttons(
     log::trace!("menu_buttons");
     let callback_data = q.clone().data.unwrap_or_default();
 
-    match callback_data {
-        data if data.starts_with("rank") => {
-            handle_rank_callback(bot, dialogue, &data, tg_contact).await?;
-        }
-        data if data.starts_with("suit") => {
-            handle_suit_callback(bot, dialogue, &data, tg_contact).await?
-        }
-        data if data.starts_with("info") => {
-            hendle_info(bot, dialogue, q, tg_contact).await?;
-        }
-        data if data.starts_with("+") => handle_plus(bot, dialogue, q.clone(), tg_contact).await?,
-        data if data.starts_with("-") => handle_minus(bot, dialogue, tg_contact).await?,
-        data if data.starts_with("chain") => {
-            handle_select_in_chain(bot, dialogue, q.clone(), tg_contact).await?
-        }
-        data if data.starts_with(">>>") => {
-            have_patience(bot, dialogue, q.clone(), tg_contact).await?
-        }
-        _ => {
-            log::debug!("Не определена категория");
+    if q.message.clone().unwrap().id == tg_contact.clone().menu_msg.unwrap().id {
+        match callback_data {
+            data if data.starts_with("rank") => {
+                handle_rank_callback(bot, dialogue, &data, tg_contact).await?;
+            }
+            data if data.starts_with("suit") => {
+                handle_suit_callback(bot, dialogue, &data, tg_contact).await?
+            }
+            data if data.starts_with("info") => {
+                hendle_info(bot, dialogue, q, tg_contact).await?;
+            }
+            data if data.starts_with("+") => {
+                handle_plus(bot, dialogue, q.clone(), tg_contact).await?
+            }
+            data if data.starts_with("-") => handle_minus(bot, dialogue, tg_contact).await?,
+            data if data.starts_with("chain") => {
+                handle_select_in_chain(bot, dialogue, q.clone(), tg_contact).await?
+            }
+            data if data.starts_with(">>>") => {
+                have_patience(bot, dialogue, q.clone(), tg_contact).await?
+            }
+            _ => {
+                log::debug!("Не определена категория");
+            }
         }
     }
 

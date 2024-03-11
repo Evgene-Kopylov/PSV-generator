@@ -23,6 +23,22 @@ pub async fn spawn_menu(
     Ok(message)
 }
 
+// pub fn respawn_menu(
+//     bot: Bot,
+//     // msg: Message,
+//     tg_contact: TgContact,
+// ) -> Result<Message, TexoxideError> {
+//     let text = "Пасьянс Симпатии и Валентности.";
+
+//     let keyboard = make_keyboard(tg_contact);
+//     let message: Message = bot
+//         // .parse_mode(ParseMode::Html)
+//         .send_message(msg.chat.id, text)
+//         .reply_markup(keyboard)
+//         .await?;
+//     Ok(message)
+// }
+
 /// # Разметка клавиш
 pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
     let mut keyboard: Vec<Vec<InlineKeyboardButton>> = vec![];
