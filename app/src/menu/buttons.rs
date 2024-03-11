@@ -8,6 +8,7 @@ use teloxide::{
     payloads::EditMessageReplyMarkupSetters,
     prelude::{Bot, CallbackQuery},
     requests::Requester,
+    types::Message,
 };
 
 use crate::{
@@ -42,6 +43,9 @@ pub async fn menu_buttons(
             data if data.starts_with("-") => handle_minus(bot, dialogue, tg_contact).await?,
             data if data.starts_with("chain") => {
                 handle_select_in_chain(bot, dialogue, q.clone(), tg_contact).await?
+            }
+            data if data.starts_with("restart") => {
+                restart(bot, dialogue, q.message.unwrap()).await?
             }
             data if data.starts_with(">>>") => {
                 have_patience(bot, dialogue, q.clone(), tg_contact).await?
@@ -145,14 +149,26 @@ async fn handle_minus(
     Ok(())
 }
 
+async fn restart(bot: Bot, dialogue: TeloxideDialogue, msg: Message) -> Result<(), TexoxideError> {
+    log::trace!("restart");
+
+    let mut tg_contact = TgContact::new();
+    let keyboard = make_keyboard(tg_contact.clone());
+    let message = bot
+        .edit_message_reply_markup(dialogue.chat_id(), msg.id)
+        .reply_markup(keyboard)
+        .await?;
+    tg_contact.menu_msg = Some(message);
+    dialogue.update(State::Menu { tg_contact }).await?;
+
+    Ok(())
+}
+
 pub async fn update_menu(
     bot: Bot,
     dialogue: TeloxideDialogue,
     mut tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
-    // // сбросить активный индекс
-    // tg_contact.chain_index = None;
-
     // собрать новуыю клавиатуру
     let keyboard = make_keyboard(tg_contact.clone());
 

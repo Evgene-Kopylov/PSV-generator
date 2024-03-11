@@ -140,6 +140,11 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
         InlineKeyboardButton::callback("➖", "-"),
         InlineKeyboardButton::callback("➕", "+1"),
         InlineKeyboardButton::callback("➕➕", "+5"),
+    ];
+    keyboard.push(row);
+
+    let row = vec![
+        InlineKeyboardButton::callback("⟲", "restart"),
         InlineKeyboardButton::callback(">>>", ">>>"),
     ];
     keyboard.push(row);
