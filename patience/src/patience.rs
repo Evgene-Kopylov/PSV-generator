@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use colored::*;
 use rand::rngs::mock::StepRng;
 use rand::seq::SliceRandom;
@@ -7,7 +9,7 @@ use shuffle::shuffler::Shuffler;
 
 use crate::settings::MAX_ITERATIONS;
 
-#[derive(Debug, Default, Clone, PartialEq)]
+#[derive(Debug, Default, Clone, PartialEq, Hash, Eq)]
 pub struct Card {
     pub suit: Option<String>,
     pub rank: Option<String>,
@@ -208,6 +210,12 @@ impl MySpread {
     }
 
     pub fn chain_check(&self, chain: Vec<Card>) -> Option<Vec<Card>> {
+        // проверить отсутсвие повторений
+        let set: HashSet<_> = chain.iter().collect();
+        if set.len() != chain.len() {
+            return None;
+        }
+
         let mut chain = chain.clone();
         let max = chain.len();
 
