@@ -40,7 +40,12 @@ impl TgContact {
         T: Into<usize>,
         V: Into<String>,
     {
-        self.suits[index.into()] = value.into();
+        let index = index.into();
+        if index >= self.suits.len() {
+            self.suits.push(value.into());
+        } else {
+            self.suits[index] = value.into();
+        }
     }
 
     pub fn chain_expend<T: Into<usize>>(&mut self, n: T) {

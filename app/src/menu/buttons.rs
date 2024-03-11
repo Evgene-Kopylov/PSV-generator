@@ -257,13 +257,15 @@ async fn handle_suit_callback(
         tg_contact.update_chain(None, Some(suit));
     } else {
         // suit edit
-        let (_, suit) = split_callback_data(data);
-        log::trace!("suit_value = {}", suit);
+        let (_, value) = split_callback_data(data);
+        log::trace!("suit_value = {}", value);
 
-        if let Some(index) = get_index_by_value(tg_contact.clone().suits, suit) {
+        if let Some(index) = get_index_by_value(tg_contact.clone().suits, value) {
             log::trace!("получен индекс масти");
             tg_contact.suit_index = Some(index);
-            // tg_contact.update_suit(index, "__");
+        } else if value.chars().all(|c| c.is_digit(10)) {
+            let index: usize = value.parse().unwrap();
+            tg_contact.suit_index = Some(index);
         }
     }
 
