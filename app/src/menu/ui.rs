@@ -3,8 +3,8 @@ use teloxide::{
     types::{InlineKeyboardButton, InlineKeyboardMarkup},
 };
 
-use crate::TexoxideError;
 use crate::TgContact;
+use crate::{structs::tg_contact::Select, TexoxideError};
 
 /// # спавн меню
 pub async fn spawn_menu(
@@ -83,24 +83,30 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
 
     // Цепочка
     let mut text = String::new();
-    if tg_contact.chain_index.is_some() {
-        text += &format!(
-            "Карта № {} из {}",
-            tg_contact.clone().chain_index.unwrap() + 1,
-            chain.len()
-        );
-    } else {
-        text += &format!("Цепочка {} карт", chain.len());
+    match tg_contact.select {
+        Select::Card { index } => {
+            text += &format!(
+                "Карта № {} из {}",
+                match tg_contact.clone().select {
+                    Select::Card { index } => index + 1,
+                    _ => 0, // Обработка случая Select::None (или других вариантов)
+                },
+                chain.len()
+            );
+        }
+        _ => {
+            text += &format!("Цепочка {} карт", chain.len());
+        }
     }
     let row = vec![InlineKeyboardButton::callback(text, "info_chain")];
     keyboard.push(row);
     // грид цепочки
-    let mut index = 0;
+    let mut i = 0;
     for chank in chain.chunks(btn_row_size) {
         let mut row = vec![];
         for item in chank {
             let mut card_text = String::new();
-            let callback_data = format!("chain_{}", &index);
+            let callback_data = format!("chain_{}", &i);
 
             if let Some(card) = item {
                 card_text += &format!(
@@ -112,23 +118,26 @@ pub fn make_keyboard(tg_contact: TgContact) -> InlineKeyboardMarkup {
                 card_text += "  ";
             }
 
-            if let Some(active_index) = tg_contact.chain_index {
-                if active_index == index {
-                    if card_text.starts_with("  ") {
-                        card_text = format!("|_ _|");
-                    } else {
-                        card_text = format!("|{}|", card_text);
+            match tg_contact.select {
+                Select::Card { index } => {
+                    if index == i {
+                        if card_text.starts_with("  ") {
+                            card_text = format!("|_ _|");
+                        } else {
+                            card_text = format!("|{}|", card_text);
+                        }
                     }
                 }
+                Select::Suit { index } => {}
+                Select::None => {}
             }
             row.push(InlineKeyboardButton::callback(card_text, callback_data));
-            index += 1;
+            i += 1;
         }
 
         // дополнить линию заглушками
         for _ in 1..btn_row_size {
             if row.len() < btn_row_size {
-                // ☠   ⌧  ⌲  ⍁   ╳  ＞＜   ＞∘＜   ＞○＜"
                 let text = "∘";
                 let callback_data = "empty";
                 row.push(InlineKeyboardButton::callback(text, callback_data))

@@ -1,8 +1,11 @@
 // #![allow(unused)] // FIXME
 
-use std::{fmt::Display, ops::Index, usize};
+use std::{fmt::Display, usize};
 
-use crate::{menu::ui::make_keyboard, structs::patience::Patience};
+use crate::{
+    menu::ui::make_keyboard,
+    structs::{patience::Patience, tg_contact::Select},
+};
 
 use teloxide::{
     payloads::EditMessageReplyMarkupSetters,
@@ -68,7 +71,7 @@ async fn hendle_info(
     _q: CallbackQuery,
     mut tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
-    tg_contact.chain_index = None;
+    tg_contact.select = Select::None;
     dialogue
         .update(State::Menu {
             tg_contact: tg_contact.clone(),
@@ -128,7 +131,8 @@ async fn handle_select_in_chain(
     if parts.len() == 2 {
         let index = parts[1].parse::<usize>().unwrap();
         log::trace!("active_index = {}", &index);
-        tg_contact.chain_index = Some(index);
+        // tg_contact.chain_index = Some(index);
+        tg_contact.select = Select::Card { index };
         dialogue
             .update(State::Menu {
                 tg_contact: tg_contact.clone(),
@@ -253,19 +257,22 @@ async fn handle_suit_callback(
     let (_, suit) = split_callback_data(data);
     log::trace!("suit_value = {}", suit);
 
-    if tg_contact.chain_index.is_some() {
-        tg_contact.update_chain(None, Some(suit));
-    } else {
-        // suit edit
-        let (_, value) = split_callback_data(data);
-        log::trace!("suit_value = {}", value);
+    match tg_contact.select {
+        Select::Card { index } => {
+            tg_contact.update_chain(None, Some(suit));
+        }
+        _ => {
+            // suit edit
+            let (_, value) = split_callback_data(data);
+            log::trace!("suit_value = {}", value);
 
-        if let Some(index) = get_index_by_value(tg_contact.clone().suits, value) {
-            log::trace!("получен индекс масти");
-            tg_contact.suit_index = Some(index);
-        } else if value.chars().all(|c| c.is_digit(10)) {
-            let index: usize = value.parse().unwrap();
-            tg_contact.suit_index = Some(index);
+            if let Some(index) = get_index_by_value(tg_contact.clone().suits, value) {
+                log::trace!("получен индекс масти");
+                tg_contact.suit_index = Some(index);
+            } else if value.chars().all(|c| c.is_digit(10)) {
+                let index: usize = value.parse().unwrap();
+                tg_contact.suit_index = Some(index);
+            }
         }
     }
 

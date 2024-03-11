@@ -4,16 +4,29 @@ use patience_lib::patience::{give_default, Card};
 
 use super::patience::Patience;
 
+#[derive(Clone, Default)]
+pub enum Select {
+    #[default]
+    None,
+    Card {
+        index: usize,
+    },
+    Suit {
+        index: usize,
+    },
+}
+
 #[derive(Clone)]
 pub struct TgContact {
     pub suits: Vec<String>,
     pub ranks: Vec<String>,
     pub chain: Vec<Option<Card>>,
-    pub chain_index: Option<usize>,
+    // pub chain_index: Option<usize>,
     pub suit_index: Option<usize>,
     pub patience_index: Option<usize>,
     pub menu_msg: Option<Message>,
     pub patience: Option<Patience>,
+    pub select: Select,
 }
 
 impl TgContact {
@@ -27,11 +40,12 @@ impl TgContact {
             suits,
             ranks,
             chain,
-            chain_index: None,
+            // chain_index: None,
             suit_index: None,
             patience_index: None,
             menu_msg: None,
             patience: None,
+            select: Select::None,
         }
     }
 
@@ -74,32 +88,35 @@ impl TgContact {
                 let _ = s.into();
             },
         );
-        if let Some(index) = self.chain_index {
-            if let Some(rank) = rank {
-                if let Some(_card) = &self.chain[index] {
-                    log::trace!("есть карта!!!");
-                    if let Some(card) = self.chain.get_mut(index).unwrap() {
-                        card.update_rank(rank);
+        match self.select {
+            Select::Card { index } => {
+                if let Some(rank) = rank {
+                    if let Some(_card) = &self.chain[index] {
+                        log::trace!("есть карта!!!");
+                        if let Some(card) = self.chain.get_mut(index).unwrap() {
+                            card.update_rank(rank);
+                        }
+                    } else {
+                        let card = Card::new(None, Some(rank));
+                        self.chain[index] = Some(card);
+                        log::trace!("Новая карта!")
                     }
-                } else {
-                    let card = Card::new(None, Some(rank));
-                    self.chain[index] = Some(card);
-                    log::trace!("Новая карта!")
                 }
-            }
 
-            if let Some(suit) = suit {
-                if let Some(_card) = &self.chain[index] {
-                    log::trace!("есть карта!!!");
-                    if let Some(card) = self.chain.get_mut(index).unwrap() {
-                        card.update_suit(suit);
+                if let Some(suit) = suit {
+                    if let Some(_card) = &self.chain[index] {
+                        log::trace!("есть карта!!!");
+                        if let Some(card) = self.chain.get_mut(index).unwrap() {
+                            card.update_suit(suit);
+                        }
+                    } else {
+                        let card = Card::new(Some(suit), None);
+                        self.chain[index] = Some(card);
+                        log::trace!("Новая карта!")
                     }
-                } else {
-                    let card = Card::new(Some(suit), None);
-                    self.chain[index] = Some(card);
-                    log::trace!("Новая карта!")
                 }
             }
+            _ => {}
         }
     }
 }
