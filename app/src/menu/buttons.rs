@@ -20,7 +20,7 @@ pub async fn menu_buttons(
     bot: Bot,
     dialogue: TeloxideDialogue,
     q: CallbackQuery,
-    mut tg_contact: TgContact,
+    tg_contact: TgContact,
 ) -> Result<(), TexoxideError> {
     log::trace!("menu_buttons");
     let callback_data = q.clone().data.unwrap_or_default();

@@ -1,17 +1,14 @@
 use teloxide::{prelude::Bot, requests::Requester};
 
-use crate::start::message;
 use crate::{State, TeloxideDialogue, TexoxideError, TgContact};
-use teloxide::types::ParseMode;
 use teloxide::{
     prelude::*,
     types::{InlineKeyboardButton, InlineKeyboardMarkup},
 };
 
-fn make_text(mut tg_contact: TgContact) -> String {
+fn make_text(tg_contact: TgContact) -> String {
     log::trace!("делаю текст");
-    let mut patience = tg_contact.clone().patience.unwrap();
-    // dbg!(&patience.target);
+    let patience = tg_contact.clone().patience.unwrap();
     let target = patience.target_string();
     let chain_text = patience.chain_to_string();
     let rest = patience.leftover_to_string();
